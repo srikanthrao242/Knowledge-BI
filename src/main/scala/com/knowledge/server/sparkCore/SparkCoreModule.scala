@@ -1,7 +1,8 @@
-package com.spr.SparkCore
+package com.knowledge.server.sparkCore
 
 import java.io.File
 
+import net.sansa_stack.query.spark.graph.jena.model.SparkExecutionModel
 import org.apache.spark.sql.SparkSession
 
 
@@ -27,9 +28,12 @@ trait SparkCoreModule {
                                   .config("parquet.enable.dictionary", "false")
                                   .config("hive.support.concurrency", "true")
                                   .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+                                  .config("spark.kryo.registrator", String.join(
+                                    ", ",
+                                    "net.sansa_stack.rdf.spark.io.JenaKryoRegistrator",
+                                    "net.sansa_stack.query.spark.sparqlify.KryoRegistratorSparqlify"))
+                                  //.enableHiveSupport()
                                   .getOrCreate()
+  SparkExecutionModel.setSparkSession(SPARK)
   final implicit lazy val SPARK_CONTEXT = SPARK.sparkContext
-
-
-  
 }

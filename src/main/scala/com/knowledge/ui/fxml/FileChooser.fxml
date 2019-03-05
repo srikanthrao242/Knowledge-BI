@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="189.0" prefWidth="574.0"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.knowledge.ui.controllers.FilechoserController">
+    <children>
+        <Button id="upload_file" fx:id="uploaddata" layoutX="450.0" layoutY="120.0" mnemonicParsing="false" onAction="#saveParquet" text="Upload" />
+        <TextField fx:id="filepath" layoutX="38.0" layoutY="32.0" prefHeight="25.0" prefWidth="336.0" />
+        <Button id="upload_file" fx:id="filechoose" layoutX="411.0" layoutY="32.0" mnemonicParsing="false" onAction="#extrachFile" prefHeight="25.0" prefWidth="128.0" text="Choose File" />
+        <TextField fx:id="tablename" layoutX="203.0" layoutY="67.0" prefHeight="25.0" prefWidth="336.0" />
+        <Button layoutX="38.0" layoutY="67.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="128.0" text="CATALOG NAME" />
+        <Label fx:id="uploadlabel" layoutX="38.0" layoutY="123.0" prefHeight="15.0" prefWidth="387.0" />
+    </children>
+</AnchorPane>
