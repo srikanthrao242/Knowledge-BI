@@ -1,43 +1,41 @@
 package com.knowledge.ui.controllers
 
 import com.knowledge.server.database.CreateSchemas
-import javafx.collections.{FXCollections, ObservableList}
-import javafx.scene.control.cell.PropertyValueFactory
 import com.knowledge.server.sparkCore.SparkCoreModule
 import com.knowledge.server.util.ReadRDF
 import com.knowledge.ui.GraphMenu
+import javafx.beans.property.SimpleStringProperty
 import org.apache.jena.graph.Triple
 import org.apache.spark.rdd.RDD
-import scalafx.scene.control.{TableCell, TableColumn, TableView}
+import scalafx.scene.control.{TableColumn, TableView}
 import scalafx.collections.ObservableBuffer
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 import scalafx.application.Platform
 import scalafx.scene.control.TableColumn._
+import scalafx.Includes._
 
-import collection.JavaConverters._
-
-case class TripleClass(Subject:String,Predicate:String,Object:String)
 
 class TableCreation extends SparkCoreModule{
 
-  def createTriplesTable[T](tableView: TableView[T],columns:List[String],data:ObservableBuffer[T]): TableView[T] ={
-    tableView.setItems(data)
-    columns.foreach(v=> {
-      val col = new TableColumn[T,String]()
+  def createTriplesTable(columns:List[String],data:ObservableBuffer[Array[String]]): TableView[Array[String]]={
+    val tableView = new TableView[Array[String]](data)
+    columns.indices.foreach(i => {
+      val v = columns(i)
+      val col = new TableColumn[Array[String], String]()
       col.text = v
-      col.setCellValueFactory(new PropertyValueFactory[T,String](v))
+      col.cellValueFactory = {
+        g => new SimpleStringProperty(g.value(i))
+      }
       tableView.columns += col
     })
-    tableView.setItems(data)
     tableView
   }
-
-  def spoTableCreation(data:Array[TripleClass]):Unit={
-    val fullData: ObservableBuffer[TripleClass] = ObservableBuffer(data:_*)
+  def spoTableCreation(data:Array[Array[String]]):Unit={
+    val fullData: ObservableBuffer[Array[String]] = ObservableBuffer(data:_*)
     val columns = List("Subject","Predicate","Object")
-    val tableView = createTriplesTable[TripleClass](new TableView[TripleClass](),columns,fullData)
+    val tableView = createTriplesTable(columns,fullData)
     Platform.runLater(new Runnable() {
       def run() {
         GraphMenu.vb.children.add(tableView)
@@ -52,7 +50,6 @@ class TableCreation extends SparkCoreModule{
       else
         CreateSchemas.getWareHousePath+catalog
       path = path + (if(repository.isEmpty) ""; else "/"+repository)
-      println(path)
       df.saveAsObjectFile(path)
       true
     }catch {
@@ -72,10 +69,10 @@ class TableCreation extends SparkCoreModule{
           val obj = if(t.getObject.isBlank) t.getObject.getBlankNodeLabel
           else if(t.getObject.isURI) t.getObject.getURI
           else t.getObject.getLiteral.toString()
-          TripleClass(subj,pre,obj)
+          Array(subj,pre,obj)
         }).collect()
         spoTableCreation(arr)
-      case Failure(ex) => println(ex)
+      case Failure(ex) => println(ex.getMessage)
     }
   }
 
