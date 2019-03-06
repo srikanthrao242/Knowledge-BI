@@ -13,7 +13,7 @@ class SparqlQueryController(private var vbox:VBox,
   def executeQuery(): Unit ={
     println("execution of query")
     val gq = new GrpahQuery()
-    gq.createConfigAndRun(queryArea.getText,"sri")
+    gq.createConfigAndRun(queryArea.getText)
   }
 
   def cancelExecution(): Unit ={

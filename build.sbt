@@ -8,7 +8,7 @@ val varscalaVersion = "2.11.11"
 val varscalaBinaryVersion = "2.11"
 val sansaVersion = "0.4.0"
 
-val sparkVersion = "2.3.1"
+val sparkVersion = "2.4.0"
 
 
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.8.7"
@@ -19,7 +19,8 @@ dependencyOverrides += "com.fasterxml.jackson.module" % "jackson-module-scala_2.
 
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core"      % sparkVersion ,
-  "org.apache.spark" %% "spark-sql"       % sparkVersion
+  "org.apache.spark" %% "spark-sql"       % sparkVersion ,
+  "com.franz" % "agraph-java-client" % "2.2.1"
 )
 
 libraryDependencies ++= Seq(

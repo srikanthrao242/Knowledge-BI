@@ -1,5 +1,7 @@
 package com.knowledge.server.util
 
+import java.io.File
+
 import com.knowledge.server.sparkCore.SparkCoreModule
 import net.sansa_stack.rdf.spark.io._
 import org.apache.jena.graph.Triple
@@ -16,12 +18,15 @@ import scala.concurrent.Future
 object ReadRDF extends SparkCoreModule{
 
   def readNtriples(input:String):Future[RDD[Triple]]= async {
-    val lang = Lang.NTRIPLES
+    var lang = Lang.NTRIPLES
+    val pat = """(.*)[.]([^.]*)""".r
+    val extension: String = input match  { case pat(fn,ext) => ext }
+    if(extension == "nq" || extension == "nquads"){
+      lang = Lang.NQ
+    }else if(extension == "rdf"){
+      lang = Lang.RDFXML
+    }
     SPARK.rdf(lang)(input)
-  }
-
-  def main(args: Array[String]): Unit = {
-    readNtriples("./datasets/rdf.nt")
   }
 
 }
