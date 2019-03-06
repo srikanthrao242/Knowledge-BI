@@ -12,6 +12,6 @@ object AG{
   val HOST = "localhost"
   val PORT = "10035"
   val SERVER_URL = "http://" + HOST + ":" + PORT
-  val USERNAME = "leadsemantics"
+  val USERNAME = "********"
   val PASSWORD = "123456"
 }
