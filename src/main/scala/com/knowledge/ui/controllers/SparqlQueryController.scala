@@ -1,9 +1,10 @@
 package com.knowledge.ui.controllers
 
 import com.knowledge.server.database.AllegroGraph.AG
+import scalafx.application.Platform
 import scalafx.scene.control.TextArea
 import scalafx.scene.layout.{HBox, VBox}
-import com.knowledge.server.database.GrpahQuery
+//import com.knowledge.server.database.GrpahQuery
 import scalafxml.core.macros.sfxml
 
 @sfxml
@@ -13,6 +14,7 @@ class SparqlQueryController(private var vbox:VBox,
 
   def executeQuery(): Unit ={
     println("execution of query")
+
     /*val gq = new GrpahQuery()
     gq.createConfigAndRun(queryArea.getText)*/
 
@@ -23,6 +25,8 @@ class SparqlQueryController(private var vbox:VBox,
 
   def cancelExecution(): Unit ={
     println("cancel query")
+    this.hbox.getScene
+
   }
 
 }

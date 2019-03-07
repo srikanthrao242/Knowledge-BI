@@ -12,7 +12,7 @@ import scalafx.application.{JFXApp, Platform}
 import scalafx.event.subscriptions.Subscription
 import scalafx.scene.Scene
 import scalafx.scene.control._
-import scalafx.scene.input.{InputEvent, MouseEvent}
+import scalafx.scene.input.{InputEvent, KeyCombination, MouseEvent}
 import scalafx.scene.layout.VBox
 import scalafx.stage.Stage
 import scalafxml.core.{FXMLView, NoDependencyResolver}
@@ -54,6 +54,7 @@ object GraphMenu extends JFXApp{
   }
 
   val new_ = new MenuItem("New")
+  new_.accelerator =  KeyCombination.keyCombination("Ctrl+N")
 
   menu.items.add(new_)
 
@@ -79,7 +80,18 @@ object GraphMenu extends JFXApp{
       }
   }
 
+  file.accelerator = KeyCombination.keyCombination("Ctrl+O")
   menu.items.add(file)
+
+  val exit = new MenuItem("Quit")
+  exit.setAccelerator(KeyCombination.keyCombination("Ctrl+Q"))
+
+  exit.onAction = new EventHandler[ActionEvent] {
+    override def handle(event: ActionEvent) {
+      Platform.exit()
+    }
+  }
+  menu.items.add(exit)
 
   val menuBar = new MenuBar()
 

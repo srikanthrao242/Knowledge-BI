@@ -11,24 +11,18 @@ import prefuse.action.layout.graph.ForceDirectedLayout
 import prefuse.activity.Activity
 import prefuse.controls.{DragControl, PanControl, ZoomControl}
 import prefuse.data.{Graph, Node, Tuple}
-import prefuse.data.io.GraphMLReader
 import prefuse.render.{DefaultRendererFactory, LabelRenderer}
 import prefuse.util.{ColorLib, GraphLib, PrefuseConfig}
 import prefuse.visual.VisualItem
 import scalafx.application.Platform
 import scalafx.embed.swing.SwingNode
 
-import scala.collection.immutable.HashMap
 
-class GraphView{
+class GraphView {
 
   var graph:Graph = new prefuse.data.Graph()
   graph.addColumn("lable",classOf[String])
   graph.addColumn("nodeKey",classOf[Int])
-
-
-
-
 
   //http://www.cip.ifi.lmu.de/~kammerga/prefuseDoc/HelloWorldNodeSize.html
   /*try{
@@ -51,6 +45,10 @@ class GraphView{
 
   val r = new LabelRenderer("lable")
   r.setRoundedCorner(8, 8)
+
+
+
+
 
   vis.setRendererFactory(new DefaultRendererFactory(r))
 
@@ -110,10 +108,6 @@ class GraphView{
 
   vis.run("color")  // assign the colors
   vis.run("layout")
-
-
-
-
 
 }
 
