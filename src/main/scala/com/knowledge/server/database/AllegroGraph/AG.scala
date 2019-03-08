@@ -3,6 +3,7 @@ package com.knowledge.server.database.AllegroGraph
 import com.franz.agraph.jena.{AGGraphMaker, AGModel, AGQueryExecutionFactory, AGQueryFactory}
 import com.franz.agraph.repository.{AGRepositoryConnection, AGServer}
 import com.knowledge.ui.controllers.TableCreation
+import com.knowledge.ui.prefuse.GraphView
 import org.apache.jena.query.ResultSet
 
 import scala.collection.mutable.ArrayBuffer
@@ -56,17 +57,17 @@ class AG(CATALOG_ID : String, REPOSITORY_ID:String) {
   *
   * */
 
-  def sparql(query:String, show : Boolean): ResultSet ={
+  def sparql(query:String, table:Boolean, graph:Boolean): Unit ={
     val model = agModel(false)
     try{
       val sparql = AGQueryFactory.create(query)
       val qe = AGQueryExecutionFactory.create(sparql,model)
       try{
-        val results: ResultSet = qe.execSelect()
-        if(show){
-          new TableCreation().createTableOfResultSet(results)
-        }
-        results
+        //val results: ResultSet = qe.execSelect()
+        if(table)
+          new TableCreation().createTableOfResultSet(qe.execSelect())
+        if(graph)
+          new GraphView().createGraph(qe.execSelect(),query)
       }finally {
         qe.close()
       }
@@ -103,7 +104,7 @@ object AG{
   val HOST = "localhost"
   val PORT = "10035"
   val SERVER_URL = "http://" + HOST + ":" + PORT
-  val USERNAME = "**********"
+  val USERNAME = "leadsemantics"
   val PASSWORD = "123456"
   val toClose  = new ArrayBuffer[AGRepositoryConnection]()
 

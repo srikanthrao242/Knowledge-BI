@@ -1,113 +1,157 @@
 package com.knowledge.ui.prefuse
 
-import java.util
+import java.awt.Dimension
 
+import com.knowledge.server.util.IteratorResultSetQuerySolution
 import com.knowledge.ui.GraphMenu
-import javax.swing.JFrame
-import prefuse.action.{ActionList, RepaintAction}
-import prefuse.{Constants, Display, Visualization}
-import prefuse.action.assignment.{ColorAction, DataColorAction}
-import prefuse.action.layout.graph.ForceDirectedLayout
-import prefuse.activity.Activity
-import prefuse.controls.{DragControl, PanControl, ZoomControl}
-import prefuse.data.{Graph, Node, Tuple}
-import prefuse.render.{DefaultRendererFactory, LabelRenderer}
-import prefuse.util.{ColorLib, GraphLib, PrefuseConfig}
-import prefuse.visual.VisualItem
+import edu.uci.ics.jung.algorithms.layout.CircleLayout
+
+import edu.uci.ics.jung.graph.SparseMultigraph
+import edu.uci.ics.jung.visualization.VisualizationViewer
+import edu.uci.ics.jung.visualization.control.{DefaultModalGraphMouse, ModalGraphMouse}
+import edu.uci.ics.jung.visualization.decorators.ToStringLabeller
+import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position
+import org.apache.jena.query.{QuerySolution, ResultSet}
+import org.eclipse.rdf4j.query.algebra.StatementPattern
+import org.eclipse.rdf4j.query.algebra.helpers.StatementPatternCollector
+import org.eclipse.rdf4j.query.parser.sparql.SPARQLParserFactory
 import scalafx.application.Platform
 import scalafx.embed.swing.SwingNode
 
+import scala.util.hashing.MurmurHash3
+import scala.collection.JavaConverters._
+
+
+sealed abstract class PNode
+
+case class KNode(id:Long,name:String) extends PNode{
+  override def toString: String ={
+    "V"+id
+  }
+}
+
+case object EmptyNode extends PNode {
+  override def toString = "empty"
+}
+
+sealed abstract class PLink
+
+case class KLink(id:Long,name:String) extends PLink{
+  override def toString: String ={
+    "E"+id
+  }
+}
+
+case object EmptyLink extends PLink{
+  override def toString = "empty"
+}
+
+case class Patterns(subject:String,predicate:String, obj:String, context:String)
 
 class GraphView {
 
-  var graph:Graph = new prefuse.data.Graph()
-  graph.addColumn("lable",classOf[String])
-  graph.addColumn("nodeKey",classOf[Int])
+  def getStatementPatterns(sparqlQuery : String): List[Patterns] ={
+    val factory = new SPARQLParserFactory()
+    val parser = factory.getParser
+    val parsedQuery = parser.parseQuery(sparqlQuery, null)
+    val collector = new StatementPatternCollector()
+    val tupleExpr = parsedQuery.getTupleExpr
+    tupleExpr.visit(collector)
+    val statementPatterns: List[StatementPattern] = collector.getStatementPatterns.asScala.toList
+    statementPatterns.map(v=>{
+      val sub = if(v.getSubjectVar.isConstant) v.getSubjectVar.getValue.stringValue() else v.getSubjectVar.getName
+      val pre = if(v.getPredicateVar.isConstant) v.getPredicateVar.getValue.stringValue() else v.getPredicateVar.getName
+      val obj = if(v.getObjectVar.isConstant) v.getObjectVar.getValue.stringValue() else v.getObjectVar.getName
+      val cont = if(v.getContextVar.isConstant) v.getContextVar.getValue.stringValue() else v.getContextVar.getName
+      Patterns(sub,pre,obj,cont)
+    })
+  }
 
-  //http://www.cip.ifi.lmu.de/~kammerga/prefuseDoc/HelloWorldNodeSize.html
-  /*try{
-    graph = new GraphMLReader().readGraph("http://prefuse.org/doc/manual/introduction/example/socialnet.xml")
-  }catch {
-    case e:Exception => e.printStackTrace()
-  }*/
+  def createVerticesEdges(graph:SparseMultigraph[PNode, PLink], patterns: List[Patterns] ,
+                          qs: QuerySolution): Unit = {
+    val qVar = qs.varNames().asScala.toList
+    patterns.foreach(pat=>{
+      val sub = pat.subject
+      var subject: PNode = EmptyNode
+      if(qVar.contains(sub)){
+        val id =  MurmurHash3.stringHash(qs.get(sub).toString).toLong
+        subject = KNode(id,qs.get(sub).toString)
+        if(!graph.containsVertex(subject))
+          graph.addVertex(subject)
+      }
 
+      val obj = pat.obj
+      var objects: PNode = EmptyNode
+      if(qVar.contains(obj)){
+        val id =  MurmurHash3.stringHash(qs.get(obj).toString).toLong
+        objects = KNode(id,qs.get(obj).toString)
+        if(!graph.containsVertex(objects))
+          graph.addVertex(objects)
+      }else{
+        val id =  MurmurHash3.stringHash(obj).toLong
+        objects = KNode(id,obj)
+        if(!graph.containsVertex(objects))
+          graph.addVertex(objects)
+      }
 
+      val pre = pat.predicate
+      var link : PLink = EmptyLink
+      if(qVar.contains(pre)){
+        val id =  MurmurHash3.stringHash(qs.get(pre).toString).toLong
+        link = KLink(id,qs.get(pre).toString)
+        if(subject.toString != "empty" && objects.toString != "empty" && !graph.containsEdge(link))
+          graph.addEdge(link,subject,objects)
+      }else{
+        val id =  MurmurHash3.stringHash(pre).toLong
+        link = KLink(id,pre)
+        if(subject.toString != "empty" && objects.toString != "empty" && !graph.containsEdge(link))
+          graph.addEdge(link,subject,objects)
+      }
 
-  val vis = new Visualization()
-  vis.add("graph", graph)
+    })
+  }
 
-  val node: Node = graph.addNode()
-  node.setString("lable","Srikanth")
-  node.setInt("nodeKey",1)
-  val node1 = graph.addNode()
-  node1.setString("lable","rao")
-  node1.setInt("nodeKey",2)
+  def createGraph(resultSet:ResultSet, sparqlQuery:String): Unit = {
+    val graph = new SparseMultigraph[PNode,PLink]()
+    val patterns = getStatementPatterns(sparqlQuery)
 
-  val r = new LabelRenderer("lable")
-  r.setRoundedCorner(8, 8)
+    val ib: Array[QuerySolution] = new IteratorResultSetQuerySolution(resultSet).toArray
+    ib.foreach(qs=> {
+      createVerticesEdges(graph,patterns,qs)
+    })
+    val  layout = new CircleLayout(graph)
+    //layout.setSize(new Dimension(300,300))
+    val vv =new VisualizationViewer[PNode,PLink](layout)
+    vv.setPreferredSize(new Dimension(1350,1350))
+    vv.getRenderContext.setVertexLabelTransformer(new ToStringLabeller())
+    vv.getRenderContext.setEdgeLabelTransformer(new ToStringLabeller())
+    vv.getRenderer.getVertexLabelRenderer.setPosition(Position.CNTR)
 
+    val  gm = new DefaultModalGraphMouse()
+    gm.setMode(ModalGraphMouse.Mode.TRANSFORMING)
+    vv.setGraphMouse(gm)
+    vv.addKeyListener(gm.getModeKeyListener)
 
+    layout.reset()
 
+    val swingNode = new SwingNode()
 
+    import javax.swing.JPanel
+    import javax.swing.SwingUtilities
 
-  vis.setRendererFactory(new DefaultRendererFactory(r))
-
-  val palette = Array(ColorLib.rgb(255, 180, 180), ColorLib.rgb(190, 190, 255))
-  val fill = new DataColorAction("graph.nodes", "lable",
-    Constants.NOMINAL, VisualItem.FILLCOLOR, palette)
-  val text = new ColorAction("graph.nodes",
-    VisualItem.TEXTCOLOR, ColorLib.gray(0))
-  val edges = new ColorAction("graph.edges",
-    VisualItem.STROKECOLOR, ColorLib.gray(200))
-  val color = new ActionList()
-  color.add(fill)
-  color.add(text)
-  color.add(edges)
-
-
-  val layout = new ActionList(Activity.INFINITY)
-  layout.add(new ForceDirectedLayout("graph"))
-  layout.add(new RepaintAction())
-
-  vis.putAction("color", color)
-  vis.putAction("layout", layout)
-
-  val display = new Display(vis)
-  display.setSize(720, 500) // set display size
-  display.addControlListener(new DragControl()) // drag items around
-  display.addControlListener(new PanControl())  // pan with background left-drag
-  display.addControlListener(new ZoomControl())
-
-  val frame = new JFrame("prefuse example")
-
-  import javax.swing.JFrame
-
-  /*frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-  frame.add(display)
-  frame.pack // layout components in window
-  frame.setVisible(true)*/
-
-
-  val swingNode = new SwingNode()
-
-  import javax.swing.JPanel
-  import javax.swing.SwingUtilities
-
-  SwingUtilities.invokeLater(new Runnable() {
-    override def run(): Unit = {
-      val panel = new JPanel
-      panel.add(display)
-      swingNode.setContent(panel)
-      Platform.runLater(new Runnable {
-        override def run(): Unit = {
-          GraphMenu.vb.children.add(swingNode)
-        }
-      })
-    }
-  })
-
-  vis.run("color")  // assign the colors
-  vis.run("layout")
+    SwingUtilities.invokeLater(new Runnable() {
+      override def run(): Unit = {
+        val panel = new JPanel
+        panel.add(vv)
+        swingNode.setContent(panel)
+        Platform.runLater(new Runnable {
+          override def run(): Unit = {
+            GraphMenu.vb.children.add(swingNode)
+          }
+        })
+      }
+    })
+  }
 
 }
 

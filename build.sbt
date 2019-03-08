@@ -20,6 +20,7 @@ dependencyOverrides += "com.fasterxml.jackson.module" % "jackson-module-scala_2.
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core"      % sparkVersion ,
   "org.apache.spark" %% "spark-sql"       % sparkVersion ,
+  //"net.sf.jung" % "jung2" % "2.0" pomOnly(),
   "com.franz" % "agraph-java-client" % "2.2.1"
 )
 
@@ -63,8 +64,8 @@ libraryDependencies ++= Seq(
   "org.scalafx" %% "scalafx" % "8.0.102-R11",
   "org.scalafx" %% "scalafxml-core-sfx8" % "0.4",
   "org.scala-lang.modules" %% "scala-async" % "0.9.7",
-  "org.abego.treelayout" % "org.abego.treelayout.core" % "1.0.3",
-  "org.prefuse" % "prefuse" % "beta-20071021",
+  /*"org.abego.treelayout" % "org.abego.treelayout.core" % "1.0.3",
+  "org.prefuse" % "prefuse" % "beta-20071021",*/
   "org.specs2" %% "specs2" % "3.7" % Test pomOnly()
 )
 

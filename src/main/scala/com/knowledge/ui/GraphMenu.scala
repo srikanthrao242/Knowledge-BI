@@ -99,6 +99,13 @@ object GraphMenu extends JFXApp{
 
   val vb: VBox = new VBox(menuBar)
 
+  val scrollPane = new ScrollPane()
+
+  scrollPane.content = vb
+
+  scrollPane.fitToHeight = true
+  scrollPane.fitToWidth = true
+
   new_.onAction = new EventHandler[ActionEvent] {
 
     override def handle(event: ActionEvent) {
@@ -107,6 +114,6 @@ object GraphMenu extends JFXApp{
     }
   }
 
-  stage.scene = new Scene(vb,1000,1000)
+  stage.scene = new Scene(scrollPane,1000,1000)
 
 }
