@@ -2,7 +2,9 @@ package com.knowledge.ui.controllers
 
 import com.knowledge.server.database.AllegroGraph.AG
 import com.knowledge.server.database.entities.KAlert
+import com.knowledge.server.util.IteratorResultSetGraphString
 import com.knowledge.ui.GraphMenu
+import com.knowledge.ui.menus.NamedGraphs
 import scalafx.application.Platform
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.control.{ListView, ProgressIndicator, TextField}
@@ -48,9 +50,23 @@ class CatalogAndRepositorySelection(private var serverIP : TextField,
   }
 
   def getNamedGraphs(): Unit ={
-
-
-
+    val catalogs = catalogView.getSelectionModel.getSelectedItems
+    val repositories = RepositoryView.getSelectionModel.getSelectedItems
+    if(catalogs.size() > 0 && repositories.size() > 0){
+      val catalog = catalogs.get(0)
+      val repository = repositories.get(0)
+      println(catalog,repository)
+      val query = "SELECT DISTINCT ?g{GRAPH ?g{?s ?p ?o}}"
+      println(query)
+      val ag = new AG(catalog,repository)
+      val resultSet = ag.sparql(query,false,false)
+      val ib: List[String] = new IteratorResultSetGraphString(resultSet).toList
+      println(ib)
+      NamedGraphs.addGraphs(ib)
+    }else{
+      println("No catalog and repository selected")
+      KAlert("Select catalog and repository.... ",GraphMenu.stage)
+    }
   }
 
   def exitForm(): Unit ={

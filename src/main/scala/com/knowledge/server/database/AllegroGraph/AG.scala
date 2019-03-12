@@ -1,12 +1,14 @@
 package com.knowledge.server.database.AllegroGraph
 
 import java.util
+
 import scala.async.Async.{async, await}
 import scala.concurrent.ExecutionContext.Implicits.global
 import com.franz.agraph.jena.{AGGraphMaker, AGModel, AGQueryExecutionFactory, AGQueryFactory}
 import com.franz.agraph.repository.{AGRepositoryConnection, AGServer}
 import com.knowledge.ui.controllers.TableCreation
 import com.knowledge.ui.prefuse.GraphView
+import org.apache.jena.query.ResultSet
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
@@ -62,17 +64,18 @@ class AG(CATALOG_ID : String, REPOSITORY_ID:String) {
   *
   * */
 
-  def sparql(query:String, table:Boolean, graph:Boolean): Unit ={
+  def sparql(query:String, table:Boolean, graph:Boolean): ResultSet ={
     val model = agModel(false)
     try{
       val sparql = AGQueryFactory.create(query)
       val qe = AGQueryExecutionFactory.create(sparql,model)
       try{
-        //val results: ResultSet = qe.execSelect()
+        val results: ResultSet = qe.execSelect()
         if(table)
-          new TableCreation().createTableOfResultSet(qe.execSelect())
+          new TableCreation().createTableOfResultSet(results)
         if(graph)
-          new GraphView().createGraph(qe.execSelect(),query)
+          new GraphView().createGraph(results,query)
+        results
       }finally {
         qe.close()
       }
