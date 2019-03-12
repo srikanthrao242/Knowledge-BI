@@ -144,11 +144,7 @@ class GraphView {
         val panel = new JPanel
         panel.add(vv)
         swingNode.setContent(panel)
-        Platform.runLater(new Runnable {
-          override def run(): Unit = {
-            GraphMenu.vb.children.add(swingNode)
-          }
-        })
+        Platform.runLater(GraphMenu.vb.children.add(swingNode))
       }
     })
   }

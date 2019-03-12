@@ -1,12 +1,15 @@
 package com.knowledge.server.database.AllegroGraph
 
+import java.util
+import scala.async.Async.{async, await}
+import scala.concurrent.ExecutionContext.Implicits.global
 import com.franz.agraph.jena.{AGGraphMaker, AGModel, AGQueryExecutionFactory, AGQueryFactory}
 import com.franz.agraph.repository.{AGRepositoryConnection, AGServer}
 import com.knowledge.ui.controllers.TableCreation
 import com.knowledge.ui.prefuse.GraphView
-import org.apache.jena.query.ResultSet
 
 import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.Future
 
 class AG(CATALOG_ID : String, REPOSITORY_ID:String) {
 
@@ -50,6 +53,8 @@ class AG(CATALOG_ID : String, REPOSITORY_ID:String) {
     }else
       model
   }
+
+
 
   /*
   *
@@ -101,11 +106,32 @@ class AG(CATALOG_ID : String, REPOSITORY_ID:String) {
 }
 
 object AG{
-  val HOST = "localhost"
-  val PORT = "10035"
+  var HOST = "localhost"
+  var PORT = "10035"
   val SERVER_URL = "http://" + HOST + ":" + PORT
-  val USERNAME = "leadsemantics"
-  val PASSWORD = "123456"
+  var USERNAME = "*****"
+  var PASSWORD = "123456"
   val toClose  = new ArrayBuffer[AGRepositoryConnection]()
+
+  def listCatalogs: Future[Array[String]] = async{
+    val server = new AGServer(SERVER_URL, USERNAME, PASSWORD)
+    import scala.collection.JavaConverters._
+    try{
+      server.listCatalogs().asScala.toArray
+    }catch{
+      case e:Exception=> Array[String]()
+    }
+  }
+
+  def listRepositories(catalog:String):Future[Array[String]] = async{
+    val server = new AGServer(SERVER_URL, USERNAME, PASSWORD)
+    import scala.collection.JavaConverters._
+    val catalog_ag = server.getCatalog(catalog)
+    if(catalog_ag != null){
+      catalog_ag.listRepositories().asScala.toArray
+    }else{
+      Array[String]()
+    }
+  }
 
 }

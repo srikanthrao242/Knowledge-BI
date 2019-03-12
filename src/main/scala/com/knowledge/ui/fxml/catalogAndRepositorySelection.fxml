@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane opacity="0.91" prefHeight="509.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.knowledge.ui.controllers.CatalogAndRepositorySelection">
+   <children>
+      <Text layoutX="94.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Server IP" wrappingWidth="110.7294921875" />
+      <TextField fx:id="serverIP" layoutX="205.0" layoutY="59.0" />
+      <Text layoutX="94.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Port" wrappingWidth="74.23486328125" />
+      <TextField fx:id="serverPort" layoutX="205.0" layoutY="100.0" />
+      <Text layoutX="94.0" layoutY="153.0" strokeType="OUTSIDE" strokeWidth="0.0" text="User" wrappingWidth="104.7294921875" />
+      <TextField fx:id="serverUser" layoutX="205.0" layoutY="135.0" />
+      <Text layoutX="93.0" layoutY="187.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" wrappingWidth="104.7294921875" />
+      <TextField fx:id="serverPassword" layoutX="204.0" layoutY="171.0" />
+      <ListView fx:id="catalogView" layoutX="90.0" layoutY="246.0" onMouseClicked="#getRepositories" prefHeight="200.0" prefWidth="200.0" />
+      <Button fx:id="serverCheck" layoutX="413.0" layoutY="171.0" mnemonicParsing="false" onAction="#checkServerAndGetCatalogs" text="OK" />
+      <ListView fx:id="RepositoryView" layoutX="313.0" layoutY="247.0" prefHeight="200.0" prefWidth="200.0" />
+      <Text layoutX="94.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Catalogs" wrappingWidth="200.0" />
+      <Text layoutX="314.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Repository" wrappingWidth="200.0" />
+      <Button fx:id="serverForm" layoutX="391.0" layoutY="464.0" mnemonicParsing="false" onAction="#getNamedGraphs" text="OK" />
+      <Button fx:id="serverCancel" layoutX="452.0" layoutY="464.0" mnemonicParsing="false" onAction="#exitForm" text="Cancel" />
+   </children>
+</AnchorPane>
