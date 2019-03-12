@@ -24,8 +24,11 @@ object GraphMenu extends JFXApp{
 
   RunQuery.addMenus(menuBar)
 
-  val vb: VBox = new VBox(menuBar)
-  vb.maxWidth = 3000
+  val vb: VBox = new VBox()
+
+  vb.prefWidthProperty().bind(stage.widthProperty())
+
+  vb.children.addAll(menuBar)
 
   val scrollPane = new ScrollPane()
 

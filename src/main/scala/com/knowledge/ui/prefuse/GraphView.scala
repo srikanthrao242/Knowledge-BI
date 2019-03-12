@@ -26,7 +26,7 @@ sealed abstract class PNode
 
 case class KNode(id:Long,name:String) extends PNode{
   override def toString: String ={
-    "V"+id
+    name
   }
 }
 
@@ -38,7 +38,7 @@ sealed abstract class PLink
 
 case class KLink(id:Long,name:String) extends PLink{
   override def toString: String ={
-    "E"+id
+    name
   }
 }
 
@@ -123,6 +123,7 @@ class GraphView {
     //layout.setSize(new Dimension(300,300))
     val vv =new VisualizationViewer[PNode,PLink](layout)
     vv.setPreferredSize(new Dimension(1350,1350))
+
     vv.getRenderContext.setVertexLabelTransformer(new ToStringLabeller())
     vv.getRenderContext.setEdgeLabelTransformer(new ToStringLabeller())
     vv.getRenderer.getVertexLabelRenderer.setPosition(Position.CNTR)
