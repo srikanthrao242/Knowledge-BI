@@ -10,6 +10,7 @@ import scalafx.scene.layout.VBox
 /**
   * Created by srikanth on 11/1/18.
   */
+
 object GraphMenu extends JFXApp{
 
   import com.knowledge.ui.menus._

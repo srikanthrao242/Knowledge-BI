@@ -26,7 +26,8 @@ object ReadRDF extends SparkCoreModule{
     }else if(extension == "rdf"){
       lang = Lang.RDFXML
     }
-    SPARK.rdf(lang)(input)
+    val rdd: RDD[Triple] = SPARK.rdf(lang)(input)
+    rdd
   }
 
 }

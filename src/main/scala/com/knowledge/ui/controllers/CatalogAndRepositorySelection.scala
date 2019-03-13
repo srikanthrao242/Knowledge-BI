@@ -1,10 +1,12 @@
 package com.knowledge.ui.controllers
 
+import com.franz.agraph.jena.{AGQueryExecutionFactory, AGQueryFactory}
 import com.knowledge.server.database.AllegroGraph.AG
 import com.knowledge.server.database.entities.KAlert
 import com.knowledge.server.util.IteratorResultSetGraphString
 import com.knowledge.ui.GraphMenu
 import com.knowledge.ui.menus.NamedGraphs
+import org.apache.jena.query.ResultSet
 import scalafx.application.Platform
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.control.{ListView, ProgressIndicator, TextField}
@@ -49,20 +51,35 @@ class CatalogAndRepositorySelection(private var serverIP : TextField,
     })
   }
 
+  def sparql(catalog:String,repository:String,query:String): Unit ={
+    val ag = new AG(catalog,repository)
+    val model = ag.agModel(false)
+    try{
+      val sparql = AGQueryFactory.create(query)
+      val qe = AGQueryExecutionFactory.create(sparql,model)
+      try{
+        val results: ResultSet = qe.execSelect()
+        val ib: List[String] = new IteratorResultSetGraphString(results).toList
+        NamedGraphs.addGraphs(ib)
+      }
+      finally {
+        qe.close()
+      }
+    }
+    finally {
+      model.close()
+    }
+  }
+
+
   def getNamedGraphs(): Unit ={
     val catalogs = catalogView.getSelectionModel.getSelectedItems
     val repositories = RepositoryView.getSelectionModel.getSelectedItems
     if(catalogs.size() > 0 && repositories.size() > 0){
       val catalog = catalogs.get(0)
       val repository = repositories.get(0)
-      println(catalog,repository)
       val query = "SELECT DISTINCT ?g{GRAPH ?g{?s ?p ?o}}"
-      println(query)
-      val ag = new AG(catalog,repository)
-      val resultSet = ag.sparql(query,false,false)
-      val ib: List[String] = new IteratorResultSetGraphString(resultSet).toList
-      println(ib)
-      NamedGraphs.addGraphs(ib)
+      sparql(catalog,repository,query)
     }else{
       println("No catalog and repository selected")
       KAlert("Select catalog and repository.... ",GraphMenu.stage)

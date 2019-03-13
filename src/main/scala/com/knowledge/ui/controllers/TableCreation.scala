@@ -80,12 +80,10 @@ class TableCreation extends SparkCoreModule{
     val ib: Array[QuerySolution] = new IteratorResultSetQuerySolution(resultSet).toArray
     val fullData: ObservableBuffer[QuerySolution] = ObservableBuffer(ib:_*)
     val tableView = createTableForResultSet(columns,fullData)
-    Platform.runLater(new Runnable() {
-      def run() {
-        GraphMenu.vb.children.add(tableView)
-      }
-    })
+    Platform.runLater(GraphMenu.vb.children.add(tableView))
   }
+
+
 
   def createTable(repository:String,path:String):Unit={
     ReadRDF.readNtriples(path).onComplete {
