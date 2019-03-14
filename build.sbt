@@ -20,6 +20,7 @@ dependencyOverrides += "com.fasterxml.jackson.module" % "jackson-module-scala_2.
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core"      % sparkVersion ,
   "org.apache.spark" %% "spark-sql"       % sparkVersion ,
+  "org.apache.spark" %% "spark-graphx"    % sparkVersion ,
   "com.franz" % "agraph-java-client" % "2.2.1",
   "net.jpountz.lz4" % "lz4" % "1.3.0"
 )

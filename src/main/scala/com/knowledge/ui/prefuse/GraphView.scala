@@ -2,10 +2,10 @@ package com.knowledge.ui.prefuse
 
 import java.awt.Dimension
 
+import com.knowledge.server.database.entities._
 import com.knowledge.server.util.IteratorResultSetQuerySolution
 import com.knowledge.ui.GraphMenu
 import edu.uci.ics.jung.algorithms.layout.CircleLayout
-
 import edu.uci.ics.jung.graph.SparseMultigraph
 import edu.uci.ics.jung.visualization.VisualizationViewer
 import edu.uci.ics.jung.visualization.control.{DefaultModalGraphMouse, ModalGraphMouse}
@@ -22,29 +22,6 @@ import scala.util.hashing.MurmurHash3
 import scala.collection.JavaConverters._
 
 
-sealed abstract class PNode
-
-case class KNode(id:Long,name:String) extends PNode{
-  override def toString: String ={
-    name
-  }
-}
-
-case object EmptyNode extends PNode {
-  override def toString = "empty"
-}
-
-sealed abstract class PLink
-
-case class KLink(id:Long,name:String) extends PLink{
-  override def toString: String ={
-    name
-  }
-}
-
-case object EmptyLink extends PLink{
-  override def toString = "empty"
-}
 
 case class Patterns(subject:String,predicate:String, obj:String, context:String)
 
