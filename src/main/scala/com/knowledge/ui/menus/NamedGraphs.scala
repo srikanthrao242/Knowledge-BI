@@ -22,7 +22,7 @@ object NamedGraphs {
     menu.items.addAll(item)
     item.onAction = handle({
       val limit = limitPopup()
-      //createTable(graph,limit)
+      createTable(graph,limit)
       getMeasures(graph,limit)
     })
   }

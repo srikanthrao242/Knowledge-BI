@@ -15,12 +15,13 @@ dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.8.7"
 dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.7"
 dependencyOverrides += "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.8.7"
 
+lazy val excludeJpountz = ExclusionRule(organization = "net.jpountz.lz4", name = "lz4")
 
 
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core"      % sparkVersion ,
-  "org.apache.spark" %% "spark-sql"       % sparkVersion ,
-  "org.apache.spark" %% "spark-graphx"    % sparkVersion ,
+  "org.apache.spark" %% "spark-core"      % sparkVersion excludeAll excludeJpountz ,
+  "org.apache.spark" %% "spark-sql"       % sparkVersion excludeAll excludeJpountz ,
+  "org.apache.spark" %% "spark-graphx"    % sparkVersion excludeAll excludeJpountz ,
   "com.franz" % "agraph-java-client" % "2.2.1",
   "net.jpountz.lz4" % "lz4" % "1.3.0"
 )

@@ -8,7 +8,7 @@ import net.sansa_stack.query.spark.query._
 import net.sansa_stack.rdf.spark.stats._
 import net.sansa_stack.rdf.spark.model._
 import org.apache.spark.sql.DataFrame
-import com.knowledge.server.database.graphx.SparkGraph
+import com.knowledge.server.database.graphx.{SparkGraph, StatisticsRDF}
 
 class Measures(data:Either[List[Triple], RDD[Triple]]) extends SparkCoreModule{
 
@@ -20,11 +20,17 @@ class Measures(data:Either[List[Triple], RDD[Triple]]) extends SparkCoreModule{
     case Right(r)=> r
   }
 
-  var graph = SparkGraph.constructGraph(rdd)
+  rdd.stats
 
+  //println(StatisticsRDF.AvgPerProperty(rdd).count())
+  /*rdd.foreach(v=>{
+    println(v.getObject.getLiteralDatatype.getURI)
+  })
+*/
 
-  rdd.sparql("select ")
+  StatisticsRDF.AvgPerPredicate(rdd)
 
+  //println(StatisticsRDF.MaxPerProperty(rdd))
 
 
 
