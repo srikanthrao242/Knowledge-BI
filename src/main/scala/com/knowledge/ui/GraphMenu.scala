@@ -1,11 +1,12 @@
 package com.knowledge.ui
 
+import javafx.scene.Node
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
 import scalafx.scene.control.ScrollPane.ScrollBarPolicy
 import scalafx.scene.control._
-import scalafx.scene.layout.VBox
+import scalafx.scene.layout.{BorderPane, VBox}
 
 /**
   * Created by srikanth on 11/1/18.
@@ -25,18 +26,28 @@ object GraphMenu extends JFXApp{
 
   RunQuery.addMenus(menuBar)
 
-  val vb: VBox = new VBox()
+  GraphLayouts.addMenus(menuBar)
+
+  val vb: VBox = new VBox(5)
 
   vb.prefWidthProperty().bind(stage.widthProperty())
 
-  vb.children.addAll(menuBar)
+  val borderPane = new BorderPane()
+  borderPane.setTop(menuBar)
 
   val scrollPane = new ScrollPane()
+  borderPane.setCenter(scrollPane)
 
   scrollPane.content = vb
   scrollPane.hbarPolicy = ScrollBarPolicy.Always
   scrollPane.vbarPolicy = ScrollBarPolicy.AsNeeded
   
-  stage.scene = new Scene(scrollPane,1000,1000)
+  stage.scene = new Scene(borderPane,1000,1000)
+
+  def addItemToVB(node:Node) : Unit = {
+    val separator = new Separator()
+    separator.setMaxWidth(Double.MaxValue)
+    vb.children.addAll(node,separator)
+  }
 
 }

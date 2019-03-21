@@ -55,7 +55,7 @@ class TableCreation extends SparkCoreModule{
     val tableView = createTriplesTable(columns,fullData)
     Platform.runLater(new Runnable() {
       def run() {
-        GraphMenu.vb.children.add(tableView)
+        GraphMenu.addItemToVB(tableView)
       }
     })
   }
@@ -80,7 +80,7 @@ class TableCreation extends SparkCoreModule{
     val ib: Array[QuerySolution] = new IteratorResultSetQuerySolution(resultSet).toArray
     val fullData: ObservableBuffer[QuerySolution] = ObservableBuffer(ib:_*)
     val tableView = createTableForResultSet(columns,fullData)
-    Platform.runLater(GraphMenu.vb.children.add(tableView))
+    Platform.runLater(GraphMenu.addItemToVB(tableView))
   }
 
 

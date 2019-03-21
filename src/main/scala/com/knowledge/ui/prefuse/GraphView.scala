@@ -5,7 +5,8 @@ import java.awt.Dimension
 import com.knowledge.server.database.entities._
 import com.knowledge.server.util.IteratorResultSetQuerySolution
 import com.knowledge.ui.GraphMenu
-import edu.uci.ics.jung.algorithms.layout.CircleLayout
+import com.knowledge.ui.menus.GraphLayouts
+import edu.uci.ics.jung.algorithms.layout._
 import edu.uci.ics.jung.graph.SparseMultigraph
 import edu.uci.ics.jung.visualization.VisualizationViewer
 import edu.uci.ics.jung.visualization.control.{DefaultModalGraphMouse, ModalGraphMouse}
@@ -88,16 +89,34 @@ class GraphView {
     })
   }
 
-  def createGraph(resultSet:ResultSet, sparqlQuery:String): Unit = {
-    val graph = new SparseMultigraph[PNode,PLink]()
+  def getGraph(resultSet:ResultSet,sparqlQuery:String) : SparseMultigraph[PNode, PLink]={
+    val graph: SparseMultigraph[PNode, PLink] = new SparseMultigraph[PNode,PLink]()
     val patterns = getStatementPatterns(sparqlQuery)
 
     val ib: Array[QuerySolution] = new IteratorResultSetQuerySolution(resultSet).toArray
     ib.foreach(qs=> {
       createVerticesEdges(graph,patterns,qs)
     })
-    val  layout = new CircleLayout(graph)
-    //layout.setSize(new Dimension(300,300))
+    graph
+  }
+
+  def getLayout(graph : SparseMultigraph[PNode, PLink]): Layout[PNode,PLink] ={
+    if(GraphLayouts.layout == "kk"){
+      new KKLayout(graph)
+    }else if(GraphLayouts.layout == "dag"){
+      new DAGLayout(graph)
+    }else if(GraphLayouts.layout == "isom"){
+      new ISOMLayout(graph)
+    }else{
+      new CircleLayout(graph)
+    }
+  }
+
+  def createGraph(resultSet:ResultSet, sparqlQuery:String): Unit = {
+
+    val graph = getGraph(resultSet,sparqlQuery)
+    val  layout: Layout[PNode,PLink] = getLayout(graph)
+    layout.setSize(new Dimension(300,300))
     val vv =new VisualizationViewer[PNode,PLink](layout)
     vv.setPreferredSize(new Dimension(1350,1350))
 
@@ -120,9 +139,10 @@ class GraphView {
     SwingUtilities.invokeLater(new Runnable() {
       override def run(): Unit = {
         val panel = new JPanel
+        panel.setMaximumSize(new Dimension(1350,500))
         panel.add(vv)
         swingNode.setContent(panel)
-        Platform.runLater(GraphMenu.vb.children.add(swingNode))
+        Platform.runLater(GraphMenu.addItemToVB(swingNode))
       }
     })
   }
