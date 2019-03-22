@@ -3,7 +3,7 @@ package com.knowledge.ui.controllers
 import com.franz.agraph.jena.{AGQueryExecutionFactory, AGQueryFactory}
 import com.knowledge.server.database.AllegroGraph.AG
 import com.knowledge.server.database.entities.KAlert
-import com.knowledge.server.util.IteratorResultSetGraphString
+import com.knowledge.server.util.IteratorResultSetString
 import com.knowledge.ui.GraphMenu
 import com.knowledge.ui.menus.NamedGraphs
 import org.apache.jena.query.ResultSet
@@ -59,7 +59,7 @@ class CatalogAndRepositorySelection(private var serverIP : TextField,
       val qe = AGQueryExecutionFactory.create(sparql,model)
       try{
         val results: ResultSet = qe.execSelect()
-        val ib: List[String] = new IteratorResultSetGraphString(results).toList
+        val ib: List[String] = new IteratorResultSetString(results,"g").toList
         NamedGraphs.addGraphs(ib)
       }
       finally {

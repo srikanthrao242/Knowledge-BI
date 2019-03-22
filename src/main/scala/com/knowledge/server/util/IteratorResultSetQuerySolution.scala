@@ -21,13 +21,15 @@ class IteratorResultSetTriples(rs: ResultSet) extends Iterator[Triple]{
   }
 }
 
-class IteratorResultSetGraphString(rs: ResultSet) extends Iterator[String]{
+class IteratorResultSetString(rs: ResultSet,col:String) extends Iterator[String]{
 
   override def hasNext: Boolean = rs.hasNext
 
   override def next(): String = {
     val qs = rs.next()
-    qs.get("g").toString
+    qs.get(col).toString
   }
 }
+
+
 

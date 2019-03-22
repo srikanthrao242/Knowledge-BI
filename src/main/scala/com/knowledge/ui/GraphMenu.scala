@@ -28,6 +28,8 @@ object GraphMenu extends JFXApp{
 
   GraphLayouts.addMenus(menuBar)
 
+  Charts.addMenus(menuBar)
+
   val vb: VBox = new VBox(5)
 
   vb.prefWidthProperty().bind(stage.widthProperty())
