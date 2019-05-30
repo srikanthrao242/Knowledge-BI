@@ -2,10 +2,10 @@ name := "Knowledge-BI"
 
 version := "1.0"
 
-scalaVersion := "2.11.11"
+scalaVersion := "2.12.8"
 
-val varscalaVersion = "2.11.11"
-val varscalaBinaryVersion = "2.11"
+val varscalaVersion = "2.12.8"
+val varscalaBinaryVersion = "2.12"
 val sansaVersion = "0.4.0"
 
 val sparkVersion = "2.4.0"
