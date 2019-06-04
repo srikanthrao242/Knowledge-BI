@@ -11,19 +11,20 @@ import scalafxml.core.macros.sfxml
   */
 
 @sfxml
-class FilechoserController(private var tablename:TextField,
-                           private var filepath:TextField,
-                           private var hbox:HBox,
-                           private var filechoose:Button,
-                           private var uploadlabel:Label){
+class FilechoserController(
+  private var tablename: TextField,
+  private var filepath: TextField,
+  private var hbox: HBox,
+  private var filechoose: Button,
+  private var uploadlabel: Label) {
 
-  def saveParquet(event: ActionEvent){
-    if(!filepath.getText().isEmpty){
-        new TableCreation().createTable(tablename.getText,filepath.getText)
+  def saveParquet(event: ActionEvent) {
+    if (!filepath.getText().isEmpty) {
+      new TableCreation().createTable(tablename.getText, filepath.getText)
     }
   }
 
-  def extrachFile(event: ActionEvent){
+  def extrachFile(event: ActionEvent) {
     val fileChooser = new FileChooser()
     val file = Option(fileChooser.showOpenDialog(new Stage()))
     file match {

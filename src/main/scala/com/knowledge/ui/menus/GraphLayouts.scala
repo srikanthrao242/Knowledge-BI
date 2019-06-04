@@ -7,29 +7,28 @@ object GraphLayouts {
 
   var layout = "circle"
 
-  def addMenus(menuBar: MenuBar): Unit ={
+  def addMenus(menuBar: MenuBar): Unit = {
 
     val layouts = new Menu("GraphLayouts")
     val circle = new MenuItem("Circle")
-    circle.onAction = handle{
+    circle.onAction = handle {
       layout = "circle"
     }
-    val dag  = new MenuItem("Dag")
-    dag.onAction = handle{
+    val dag = new MenuItem("Dag")
+    dag.onAction = handle {
       layout = "dag"
     }
-    val isom  = new MenuItem("ISOM")
-    isom.onAction = handle{
+    val isom = new MenuItem("ISOM")
+    isom.onAction = handle {
       layout = "isom"
     }
-    val kk  = new MenuItem("KK")
-    kk.onAction = handle{
+    val kk = new MenuItem("KK")
+    kk.onAction = handle {
       layout = "kk"
     }
-    layouts.items ++= List(circle,dag,isom,kk)
+    layouts.items.addAll(circle, dag, isom, kk)
 
     menuBar.getMenus.addAll(layouts)
-
   }
 
 }

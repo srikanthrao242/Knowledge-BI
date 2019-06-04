@@ -12,37 +12,36 @@ import scala.collection.immutable.HashMap
 class ScreensController {
 
   import ScreensController._
-  def addScreen(name:String,scr:Node):Unit={
-    screen +=(name -> scr)
-  }
-  def unloadScreen(name:String) : Boolean={
-    if(screen.contains(name)){
+
+  def addScreen(name: String, scr: Node): Unit =
+    screen += (name -> scr)
+
+  def unloadScreen(name: String): Boolean =
+    if (screen.contains(name)) {
       screen -= name
       true
-    }else{
+    }
+    else {
       false
     }
-  }
 
-  def loadScreen(name:String,resource:String):Option[Stage]={
-    try{
+  def loadScreen(name: String, resource: String): Option[Stage] =
+    try {
       val fxml: URL = getClass.getResource(resource)
-      val root = FXMLView(fxml,NoDependencyResolver)
+      val root = FXMLView(fxml, NoDependencyResolver)
       val dialogStage = new Stage()
       dialogStage.title = name
       dialogStage.scene = new Scene(root)
       addScreen(name, root)
       Some(dialogStage)
-    }catch{
+    } catch {
       case _ => None
     }
-  }
 
 }
-object ScreensController{
 
-  var screen = new HashMap[String,Node]()
+object ScreensController {
 
-
+  var screen = new HashMap[String, Node]()
 
 }
