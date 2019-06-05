@@ -1,7 +1,10 @@
 package com.knowledge.server.database.fuseki
 
+import com.knowledge.ui.controllers.TableCreation
+import com.knowledge.ui.prefuse.GraphView
 import org.apache.jena.query.{QueryExecutionFactory, ResultSet}
 import org.apache.jena.rdfconnection.{RDFConnection, RDFConnectionFactory}
+
 import scala.collection.mutable.ListBuffer
 
 class Fuseki {
@@ -14,7 +17,10 @@ class Fuseki {
 
   def sparqlSelect(query: String, table: Boolean, graph: Boolean): ResultSet = {
     val q = QueryExecutionFactory.sparqlService(SERVICE_URL, query)
-    q.execSelect()
+    val results = q.execSelect()
+    if (table) new TableCreation().createTableOfResultSet(results)
+    if (graph) new GraphView().createGraph(results, query)
+    results
   }
 
   def close(conn: RDFConnection): Unit =

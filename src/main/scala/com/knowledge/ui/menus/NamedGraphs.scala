@@ -6,13 +6,13 @@ import com.knowledge.server.util.IteratorResultSetTriples
 import com.knowledge.ui.GraphMenu
 import org.apache.jena.query.ResultSet
 import scalafx.scene.control.{Menu, MenuItem, TextInputDialog}
-import scalafx.Includes._
 import org.apache.jena.graph.Triple
 
 import scala.util.Try
 
 object NamedGraphs {
 
+  import scalafx.Includes._
   val menu: Menu = new Menu("NamedGraph")
 
   def addMenus(graph: String): Unit = {

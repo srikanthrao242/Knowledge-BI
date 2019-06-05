@@ -4,7 +4,6 @@ import java.io.File
 
 import org.apache.spark.sql.SparkSession
 
-
 /**
   * Created by srikanth on 5/20/18.
   */
@@ -13,7 +12,7 @@ trait SparkCoreModule {
   private val successful = dir.mkdir()
   private var warehouseLocation = new File("spark-warehouse").getAbsolutePath
   if (successful) warehouseLocation = dir.getAbsolutePath
-  final implicit lazy val SPARK = SparkSession
+  implicit final lazy val SPARK = SparkSession
     .builder()
     .master("local[4]")
     .appName("Knowlede-BI")
@@ -27,11 +26,14 @@ trait SparkCoreModule {
     .config("parquet.enable.dictionary", "false")
     .config("hive.support.concurrency", "true")
     .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-    .config("spark.kryo.registrator", String.join(
-      ", ",
-      "net.sansa_stack.rdf.spark.io.JenaKryoRegistrator",
-      "net.sansa_stack.query.spark.sparqlify.KryoRegistratorSparqlify"))
-    //.enableHiveSupport()
+    .config(
+      "spark.kryo.registrator",
+      String.join(
+        ", ",
+        "net.sansa_stack.rdf.spark.io.JenaKryoRegistrator",
+        "net.sansa_stack.query.spark.sparqlify.KryoRegistratorSparqlify")
+    )
+    // .enableHiveSupport()
     .getOrCreate()
-  final implicit lazy val SPARK_CONTEXT = SPARK.sparkContext
+  implicit final lazy val SPARK_CONTEXT = SPARK.sparkContext
 }

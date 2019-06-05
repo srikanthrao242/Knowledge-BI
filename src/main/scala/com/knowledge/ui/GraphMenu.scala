@@ -5,7 +5,6 @@ import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
 import scalafx.scene.control.ScrollPane.ScrollBarPolicy
-import scalafx.scene.control._
 import scalafx.scene.layout.{BorderPane, VBox}
 
 /**
@@ -15,6 +14,7 @@ import scalafx.scene.layout.{BorderPane, VBox}
 object GraphMenu extends JFXApp {
 
   import com.knowledge.ui.menus._
+  import scalafx.scene.control._
 
   stage = new PrimaryStage
 

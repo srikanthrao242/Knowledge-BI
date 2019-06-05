@@ -5,6 +5,11 @@ version := "1.0"
 scalaVersion := "2.12.8"
 
 val sparkVersion = "2.4.3"
+val sansaVersion = "0.4.0"
+
+dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.6.5"
+dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.5"
+dependencyOverrides += "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.6.5"
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % scalaVersion.value,
@@ -21,10 +26,15 @@ lazy val excludeSpark = ExclusionRule(organization = "org.apache.spark")
 lazy val excludeScalaCom = ExclusionRule(organization = "org.scala-lang.modules")
 lazy val excludeScalaNlp = ExclusionRule(organization = "org.scalanlp")
 lazy val excludeScalaSpireMath = ExclusionRule(organization = "org.spire-math")
+lazy val excludeSparkBench = ExclusionRule(organization = "com.ibm.sparktc.sparkbench")
+lazy val excludeShapeless = ExclusionRule(organization = "com.chuusai")
+lazy val excludeTypeLevel = ExclusionRule(organization = "org.typelevel")
+lazy val excludeJacksonCore = ExclusionRule(organization = "com.fasterxml.jackson.core")
+lazy val excludeJacksonModule = ExclusionRule(organization = "com.fasterxml.jackson.module")
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-library" % scalaVersion.value,
-  "com.intel.analytics.bigdl" % "bigdl-SPARK_2.4" % "0.8.0" excludeAll(excludeScalaNlp, excludeScalaSpireMath),
+  "com.intel.analytics.bigdl" % "bigdl-SPARK_2.2" % "0.4.0" excludeAll (excludeScalaNlp, excludeScalaSpireMath),
   "javax.ws.rs" % "javax.ws.rs-api" % "2.1" artifacts Artifact("javax.ws.rs-api", "jar", "jar")
 )
 
@@ -38,7 +48,10 @@ resolvers ++= Seq(
 )
 
 resolvers ++= Seq(
-  "Sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/", "NetBeans" at "http://bits.netbeans.org/nexus/content/groups/netbeans/", "gephi" at "https://raw.github.com/gephi/gephi/mvn-thirdparty-repo/")
+  "Sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/",
+  "NetBeans" at "http://bits.netbeans.org/nexus/content/groups/netbeans/",
+  "gephi" at "https://raw.github.com/gephi/gephi/mvn-thirdparty-repo/"
+)
 
 // Use local repositories by default
 resolvers ++= Seq(
@@ -54,5 +67,14 @@ libraryDependencies ++= Seq(
   "org.scalafx" %% "scalafx" % "12.0.1-R17",
   "org.scalafx" %% "scalafxml-core-sfx8" % "0.4",
   "org.scala-lang.modules" %% "scala-async" % "0.10.0",
-  "net.sansa-stack" % "sansa-rdf-spark_2.11" % "0.5.0" excludeAll(excludeSpark, excludeScalaCom)
+  "net.sansa-stack" % "sansa-owl-spark_2.11" % sansaVersion excludeAll (excludeSpark, excludeScalaCom, excludeSparkBench, excludeShapeless, excludeTypeLevel),
+  "net.sansa-stack" % "sansa-inference-spark_2.11" % sansaVersion excludeAll (excludeSpark, excludeScalaCom, excludeSparkBench, excludeShapeless, excludeTypeLevel),
+  "net.sansa-stack" % "sansa-query-spark_2.11" % sansaVersion excludeAll (excludeSpark, excludeScalaCom, excludeSparkBench, excludeShapeless, excludeTypeLevel),
+  "net.sansa-stack" % "sansa-ml-spark_2.11" % sansaVersion excludeAll (excludeSpark, excludeScalaCom, excludeSparkBench, excludeShapeless, excludeTypeLevel),
+  "net.sansa-stack" % "sansa-rdf-spark_2.11" % sansaVersion excludeAll (excludeSpark, excludeScalaCom, excludeSparkBench, excludeShapeless, excludeTypeLevel)
 )
+
+fork := true
+shellPrompt := { state =>
+  System.getProperty("user.name") + s":${name.value}> "
+}
