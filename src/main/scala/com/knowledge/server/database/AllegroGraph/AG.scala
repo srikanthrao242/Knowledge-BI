@@ -6,6 +6,7 @@ import scala.async.Async.async
 import scala.concurrent.ExecutionContext.Implicits.global
 import com.franz.agraph.jena.{AGGraphMaker, AGModel, AGQueryExecutionFactory, AGQueryFactory}
 import com.franz.agraph.repository.{AGRepositoryConnection, AGServer}
+import com.knowledge.server.database.GraphServers
 import com.knowledge.ui.controllers.TableCreation
 import com.knowledge.ui.prefuse.GraphView
 import org.apache.jena.query.ResultSet
@@ -13,7 +14,7 @@ import org.apache.jena.query.ResultSet
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
 
-class AG(CATALOG_ID: String, REPOSITORY_ID: String) {
+class AG(CATALOG_ID: String, REPOSITORY_ID: String) extends GraphServers {
 
   import AG._
 
@@ -24,7 +25,7 @@ class AG(CATALOG_ID: String, REPOSITORY_ID: String) {
    * Creating Repository
    * */
 
-  def repository(close: Boolean): AGGraphMaker = {
+  private def repository(close: Boolean): AGGraphMaker = {
     val server = new AGServer(SERVER_URL, USERNAME, PASSWORD)
     val catalog = server.getCatalog(CATALOG_ID)
     val repository = catalog.createRepository(REPOSITORY_ID)
@@ -68,7 +69,7 @@ class AG(CATALOG_ID: String, REPOSITORY_ID: String) {
    *
    * */
 
-  def sparql(query: String, table: Boolean, graph: Boolean): ResultSet = {
+  override def sparql(query: String, table: Boolean, graph: Boolean): ResultSet = {
     val model = agModel(false)
     try {
       val sparql = AGQueryFactory.create(query)
@@ -95,7 +96,7 @@ class AG(CATALOG_ID: String, REPOSITORY_ID: String) {
     }
   }
 
-  def close(conn: AGRepositoryConnection): Unit =
+  private def close(conn: AGRepositoryConnection): Unit =
     try {
       conn.close()
     } catch {
@@ -104,16 +105,17 @@ class AG(CATALOG_ID: String, REPOSITORY_ID: String) {
         e.printStackTrace()
     }
 
-  def closeBeforeExit(conn: AGRepositoryConnection): Unit =
+  private def closeBeforeExit(conn: AGRepositoryConnection): Unit =
     toClose += conn
 
-  def closeAll(): Unit =
+  private def closeAll(): Unit =
     while (toClose.nonEmpty) {
       val conn = toClose.head
       close(conn)
       toClose -= conn
     }
 
+  override def upload(path: String): Unit = {}
 }
 
 object AG {

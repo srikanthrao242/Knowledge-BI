@@ -12,6 +12,7 @@ import scalafx.application.Platform
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.control.{ListView, ProgressIndicator, TextField}
 import scalafxml.core.macros.sfxml
+import com.knowledge.ui._
 
 @sfxml
 class Servers(
@@ -32,6 +33,7 @@ class Servers(
     AG.PORT = serverPort.text.get()
     AG.USERNAME = serverUser.text.get()
     AG.PASSWORD = serverPassword.text.get()
+    server = "AG"
     val pb = new ProgressIndicator()
     pb.visible = false
     AG.listCatalogs.onComplete(v => {
@@ -91,6 +93,7 @@ class Servers(
     Fuseki.HOST = fusekiServerIP.text.get()
     Fuseki.PORT = fusekiServerPort.text.get()
     Fuseki.Destination = fusekiDestination.text.get()
+    server = "Fuseki"
   }
 
   def exitFusekiForm(): Unit = {}

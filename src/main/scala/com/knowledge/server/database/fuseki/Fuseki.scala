@@ -1,29 +1,64 @@
 package com.knowledge.server.database.fuseki
 
+import com.knowledge.server.database.GraphServers
 import com.knowledge.ui.controllers.TableCreation
 import com.knowledge.ui.prefuse.GraphView
-import org.apache.jena.query.{QueryExecutionFactory, ResultSet}
+import org.apache.jena.query.{QueryExecutionFactory, QueryFactory, ReadWrite, ResultSet}
+import org.apache.jena.rdf.model.Model
 import org.apache.jena.rdfconnection.{RDFConnection, RDFConnectionFactory}
+import org.apache.jena.tdb.TDBFactory
 
 import scala.collection.mutable.ListBuffer
 
-class Fuseki {
+class Fuseki extends GraphServers {
   import Fuseki._
 
-  def getConnection(): RDFConnection = {
+  private def getConnection: RDFConnection = {
     SERVICE_URL = SERVICE_URL.concat(if (Destination.startsWith("/")) Destination else "/" + Destination)
     RDFConnectionFactory.connectFuseki(Destination)
   }
 
-  def sparqlSelect(query: String, table: Boolean, graph: Boolean): ResultSet = {
-    val q = QueryExecutionFactory.sparqlService(SERVICE_URL, query)
-    val results = q.execSelect()
-    if (table) new TableCreation().createTableOfResultSet(results)
-    if (graph) new GraphView().createGraph(results, query)
-    results
+  override def upload(path: String): Unit = {
+    val conn = getConnection
+    conn.load(path)
   }
 
-  def close(conn: RDFConnection): Unit =
+  override def sparql(query: String, table: Boolean, graph: Boolean): ResultSet = {
+    val model = getModel
+    try {
+      val sparql = QueryFactory.create(query)
+      val qe = QueryExecutionFactory.create(sparql, model)
+      try {
+        val results: ResultSet = qe.execSelect()
+        if (table) new TableCreation().createTableOfResultSet(results)
+        if (graph) new GraphView().createGraph(results, query)
+        results
+      } catch {
+        case e: Exception =>
+          e.printStackTrace()
+          null
+      } finally {
+        qe.close()
+      }
+    } catch {
+      case e: Exception =>
+        e.printStackTrace()
+        null
+    } finally {
+      model.close()
+    }
+  }
+
+  private def getModel: Model = {
+    val directory = s"MyDatabases/$Destination"
+    val dataset = TDBFactory.createDataset(directory)
+    dataset.begin(ReadWrite.READ)
+    val model = dataset.getDefaultModel
+    dataset.end()
+    model
+  }
+
+  private def close(conn: RDFConnection): Unit =
     try {
       conn.close()
     } catch {
@@ -32,7 +67,7 @@ class Fuseki {
         e.printStackTrace()
     }
 
-  def closeAll(): Unit =
+  private def closeAll(): Unit =
     while (toClose.nonEmpty) {
       val conn = toClose.head
       close(conn)

@@ -1,5 +1,7 @@
 package com.knowledge.ui.controllers
 
+import com.knowledge.server.database.fuseki.Fuseki
+import org.apache.jena.riot.RDFLanguages
 import scalafx.event.ActionEvent
 import scalafx.scene.control.{Button, Label, TextField}
 import scalafx.scene.layout.HBox
@@ -20,7 +22,10 @@ class FilechoserController(
 
   def saveParquet(event: ActionEvent) {
     if (!filepath.getText().isEmpty) {
+      val lang = RDFLanguages.filenameToLang(filepath.getText)
+      println(lang.getName)
       new TableCreation().createTable(tablename.getText, filepath.getText)
+      (new Fuseki).upload(filepath.getText)
     }
   }
 
