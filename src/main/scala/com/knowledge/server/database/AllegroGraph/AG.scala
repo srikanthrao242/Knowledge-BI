@@ -13,7 +13,7 @@ import org.apache.jena.query.ResultSet
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
 
-class AG(CATALOG_ID : String, REPOSITORY_ID:String) {
+class AG(CATALOG_ID: String, REPOSITORY_ID: String) {
 
   import AG._
 
@@ -21,11 +21,10 @@ class AG(CATALOG_ID : String, REPOSITORY_ID:String) {
   REPOSITORY = REPOSITORY_ID
 
   /*
-  * Creating Repository
-  * */
+   * Creating Repository
+   * */
 
-
-  def repository(close:Boolean):AGGraphMaker = {
+  def repository(close: Boolean): AGGraphMaker = {
     val server = new AGServer(SERVER_URL, USERNAME, PASSWORD)
     val catalog = server.getCatalog(CATALOG_ID)
     val repository = catalog.createRepository(REPOSITORY_ID)
@@ -33,123 +32,118 @@ class AG(CATALOG_ID : String, REPOSITORY_ID:String) {
     val conn = repository.getConnection
     closeBeforeExit(conn)
     val maker = new AGGraphMaker(conn)
-    if(close){
+    if (close) {
       maker.close()
       conn.close()
       repository.shutDown()
       null
-    }else
+    }
+    else {
       maker
+    }
   }
 
-
   /*
-  * Get AGMODEL
-  * */
+   * Get AGMODEL
+   * */
 
-  def agModel(close:Boolean):AGModel ={
+  def agModel(close: Boolean): AGModel = {
     val maker = repository(false)
     val graph = maker.getGraph
     val model = new AGModel(graph)
-    if(close){
+    if (close) {
       model.close()
       graph.close()
       maker.close()
       null
-    }else
+    }
+    else {
       model
+    }
   }
 
-
-
   /*
-  *
-  * Sparql Query
-  *
-  * */
+   *
+   * Sparql Query
+   *
+   * */
 
-  def sparql(query:String, table:Boolean, graph:Boolean): ResultSet ={
+  def sparql(query: String, table: Boolean, graph: Boolean): ResultSet = {
     val model = agModel(false)
-    try{
+    try {
       val sparql = AGQueryFactory.create(query)
-      val qe = AGQueryExecutionFactory.create(sparql,model)
-      try{
+      val qe = AGQueryExecutionFactory.create(sparql, model)
+      try {
         val results: ResultSet = qe.execSelect()
-        //val results = ResultSetFactory.copyResults(qe.execSelect())
-        if(table)
-          new TableCreation().createTableOfResultSet(results)
-        if(graph)
-          new GraphView().createGraph(results,query)
+        // val results = ResultSetFactory.copyResults(qe.execSelect())
+        if (table) new TableCreation().createTableOfResultSet(results)
+        if (graph) new GraphView().createGraph(results, query)
         results
-      }catch{
-        case e:Exception =>
+      } catch {
+        case e: Exception =>
           e.printStackTrace()
           null
-      }
-      finally {
+      } finally {
         qe.close()
       }
-    }catch {
-      case e:Exception =>
+    } catch {
+      case e: Exception =>
         e.printStackTrace()
         null
-    }
-    finally {
+    } finally {
       model.close()
     }
   }
 
-
-  def close(conn: AGRepositoryConnection ): Unit ={
-    try{
+  def close(conn: AGRepositoryConnection): Unit =
+    try {
       conn.close()
-    }catch {
-      case e:Exception => println("Error closing repository connection: " + e)
-                          e.printStackTrace()
+    } catch {
+      case e: Exception =>
+        println("Error closing repository connection: " + e)
+        e.printStackTrace()
     }
-  }
 
-  def closeBeforeExit(conn: AGRepositoryConnection): Unit = {
+  def closeBeforeExit(conn: AGRepositoryConnection): Unit =
     toClose += conn
-  }
 
-  def closeAll(): Unit ={
-    while(toClose.nonEmpty){
+  def closeAll(): Unit =
+    while (toClose.nonEmpty) {
       val conn = toClose.head
       close(conn)
       toClose -= conn
     }
-  }
 
 }
 
-object AG{
+object AG {
   var HOST = "localhost"
   var PORT = "10035"
   val SERVER_URL = "http://" + HOST + ":" + PORT
   var USERNAME = "*****"
   var PASSWORD = "123456"
-  val toClose  = new ArrayBuffer[AGRepositoryConnection]()
+  val toClose = new ArrayBuffer[AGRepositoryConnection]()
   var CATALOG = "system"
   var REPOSITORY = ""
 
-  def listCatalogs: Future[Array[String]] = async{
+  def listCatalogs: Future[Array[String]] = async {
     val server = new AGServer(SERVER_URL, USERNAME, PASSWORD)
     import scala.collection.JavaConverters._
-    try{
+    try {
       server.listCatalogs().asScala.toArray
-    }catch{
-      case e:Exception=> Array[String]()
+    } catch {
+      case e: Exception => Array[String]()
     }
   }
 
-  def listRepositories(catalog:String):Future[Array[String]] = async{
+  def listRepositories(catalog: String): Future[Array[String]] = async {
     val server = new AGServer(SERVER_URL, USERNAME, PASSWORD)
     import scala.collection.JavaConverters._
     val catalog_ag = server.getCatalog(catalog)
-    if(catalog_ag != null){
+    if (catalog_ag != null) {
       catalog_ag.listRepositories().asScala.toArray
-    }else{
+    }
+    else {
       Array[String]()
     }
   }

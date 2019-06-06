@@ -10,22 +10,21 @@ case class Config(input: String = "", query: Seq[String] = null, print: Boolean 
                   numParts: Int = 0, numIters: Int = 0)
 
 
-
 abstract class PNode
 
-case class KNode(id:Long,name:String) extends PNode{
-  override def toString: String ={
-    try{
+case class KNode(id: Long, name: String) extends PNode {
+  override def toString: String = {
+    try {
       var a = new URL(name)
-      if(name.contains("#")){
+      if (name.contains("#")) {
         name.substring(name.lastIndexOf("#"))
-      }else{
+      } else {
         name.substring(name.lastIndexOf("/"))
       }
-    }catch {
-      case a:Exception =>
-        if(name.contains("^^"))
-          name.substring(0,name.lastIndexOf("^^"))
+    } catch {
+      case a: Exception =>
+        if (name.contains("^^"))
+          name.substring(0, name.lastIndexOf("^^"))
         else name
     }
   }
@@ -37,30 +36,30 @@ case object EmptyNode extends PNode {
 
 abstract class PLink
 
-case class KLink(id:Long,name:String) extends PLink{
-  override def toString: String ={
-    try{
+case class KLink(id: Long, name: String) extends PLink {
+  override def toString: String = {
+    try {
       var a = new URL(name)
-      if(name.contains("#")){
-        name.substring(name.lastIndexOf("#")+1)
-      }else{
-        name.substring(name.lastIndexOf("/")+1)
+      if (name.contains("#")) {
+        name.substring(name.lastIndexOf("#") + 1)
+      } else {
+        name.substring(name.lastIndexOf("/") + 1)
       }
-    }catch {
-      case a:Exception =>
-        if(name.contains("^^"))
-          name.substring(0,name.lastIndexOf("^^"))
+    } catch {
+      case a: Exception =>
+        if (name.contains("^^"))
+          name.substring(0, name.lastIndexOf("^^"))
         else name
     }
   }
 }
 
-case object EmptyLink extends PLink{
+case object EmptyLink extends PLink {
   override def toString = "empty"
 }
 
 
-case class KAlert(message: String,stage:PrimaryStage) extends Runnable {
+case class KAlert(message: String, stage: PrimaryStage) extends Runnable {
   override def run(): Unit = {
     new Alert(AlertType.Information) {
       initOwner(stage)

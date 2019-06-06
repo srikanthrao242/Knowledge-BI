@@ -10,19 +10,19 @@ import scalafxml.core.{FXMLView, NoDependencyResolver}
 
 object Charts {
 
-  def addMenus(menuBar: MenuBar): Unit={
+  def addMenus(menuBar: MenuBar): Unit = {
     val menu: Menu = new Menu("Charts")
     val menuItem = new MenuItem("Charts")
     val fxmlPath = "../fxml/Charts.fxml"
     val fxml: URL = getClass.getResource(fxmlPath)
-    menuItem.onAction = handle{
+    menuItem.onAction = handle {
       Platform.runLater(loadFXML(fxml))
     }
     menu.items.addAll(menuItem)
     menuBar.getMenus.addAll(menu)
   }
 
-  def loadFXML(fxml: URL): Unit ={
+  def loadFXML(fxml: URL): Unit = {
     val root = FXMLView(fxml, NoDependencyResolver)
     GraphMenu.addItemToVB(root)
   }

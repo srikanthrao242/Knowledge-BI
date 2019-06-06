@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="709.0" prefWidth="749.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.knowledge.ui.controllers.Servers">
+  <children>
+    <TabPane layoutX="0.0" layoutY="0.0" prefHeight="709.0" prefWidth="749.0" tabClosingPolicy="UNAVAILABLE">
+      <tabs>
+        <Tab text="AG">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <Text layoutX="94.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Server IP" wrappingWidth="110.7294921875" />
+                <TextField fx:id="serverIP" layoutX="205.0" layoutY="59.0" />
+                <Text layoutX="94.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Port" wrappingWidth="74.23486328125" />
+                <TextField fx:id="serverPort" layoutX="205.0" layoutY="100.0" />
+                <Text layoutX="94.0" layoutY="153.0" strokeType="OUTSIDE" strokeWidth="0.0" text="User" wrappingWidth="104.7294921875" />
+                <TextField fx:id="serverUser" layoutX="205.0" layoutY="135.0" />
+                <Text layoutX="93.0" layoutY="187.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" wrappingWidth="104.7294921875" />
+                <TextField fx:id="serverPassword" layoutX="204.0" layoutY="171.0" />
+                <ListView fx:id="catalogView" layoutX="90.0" layoutY="246.0" onMouseClicked="#getRepositories" prefHeight="200.0" prefWidth="200.0" />
+                <Button fx:id="serverCheck" layoutX="413.0" layoutY="171.0" mnemonicParsing="false" onAction="#checkServerAndGetCatalogs" text="OK" />
+                <ListView fx:id="RepositoryView" layoutX="313.0" layoutY="247.0" prefHeight="200.0" prefWidth="200.0" />
+                <Text layoutX="94.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Catalogs" wrappingWidth="200.0" />
+                <Text layoutX="314.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Repository" wrappingWidth="200.0" />
+                <Button fx:id="serverForm" layoutX="391.0" layoutY="464.0" mnemonicParsing="false" onAction="#getNamedGraphs" text="OK" />
+                <Button fx:id="serverCancel" layoutX="452.0" layoutY="464.0" mnemonicParsing="false" onAction="#exitForm" text="Cancel" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab text="Fuseki">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <Text layoutX="156.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Server IP" wrappingWidth="110.7294921875" />
+                <TextField id="fusekiServerIP" layoutX="296.0" layoutY="98.0" />
+                <Text layoutX="156.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Port" wrappingWidth="74.23486328125" />
+                <TextField id="fusekiServerPort" layoutX="296.0" layoutY="140.0" />
+                <Text layoutX="156.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Destination" wrappingWidth="110.7294921875" />
+                <TextField id="fusekiDestination" layoutX="296.0" layoutY="185.0" />
+                <Button id="serverForm" layoutX="296.0" layoutY="237.0" mnemonicParsing="false" onAction="#saveFusekiConf" text="OK" />
+                <Button id="serverCancel" layoutX="357.0" layoutY="237.0" mnemonicParsing="false" onAction="#exitFusekiForm" text="Cancel" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+  </children>
+</AnchorPane>

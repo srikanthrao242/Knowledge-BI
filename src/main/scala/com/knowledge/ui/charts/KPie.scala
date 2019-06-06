@@ -14,34 +14,31 @@ import scala.async.Async.async
 
 class KPie {
 
-  def sparql(catalog:String,repository:String,query:String,pane:StackPane): Unit = async{
-    val ag = new AG(catalog,repository)
+  def sparql(catalog: String, repository: String, query: String, pane: StackPane): Unit = async {
+    val ag = new AG(catalog, repository)
     val model = ag.agModel(false)
-    try{
+    try {
       val sparql = AGQueryFactory.create(query)
-      val qe = AGQueryExecutionFactory.create(sparql,model)
-      try{
+      val qe = AGQueryExecutionFactory.create(sparql, model)
+      try {
         val ib: ResultSet = qe.execSelect()
-        createPieUI(ib,pane)
-      }
-      finally {
+        createPieUI(ib, pane)
+      } finally {
         qe.close()
       }
-    }
-    finally {
+    } finally {
       model.close()
     }
   }
 
-  def createPie(query:String, pane: StackPane): Unit ={
-    println(query)
-    sparql(AG.CATALOG,AG.REPOSITORY,query,pane)
-  }
+  def createPie(query: String, pane: StackPane): Unit =
+    sparql(AG.CATALOG, AG.REPOSITORY, query, pane)
 
-  def createPieUI(result : ResultSet,pane:StackPane): Unit ={
+  def createPieUI(result: ResultSet, pane: StackPane): Unit = {
     val qs = new IteratorResultSetQuerySolution(result).toList
-    println(qs)
-    val pieChartData = ObservableBuffer(qs.map { v: QuerySolution => PieChart.Data(v.get("s").toString, v.getLiteral("measure").getDouble) })
+    val pieChartData = ObservableBuffer(qs.map { v: QuerySolution =>
+      PieChart.Data(v.get("s").toString, v.getLiteral("measure").getDouble)
+    })
     val chart = new PieChart(pieChartData)
     chart.setLabelLineLength(10)
     chart.setLegendSide(Side.Left)

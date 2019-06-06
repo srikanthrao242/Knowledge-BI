@@ -5,16 +5,16 @@ import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
 import scalafx.scene.control.ScrollPane.ScrollBarPolicy
-import scalafx.scene.control._
 import scalafx.scene.layout.{BorderPane, VBox}
 
 /**
   * Created by srikanth on 11/1/18.
   */
 
-object GraphMenu extends JFXApp{
+object GraphMenu extends JFXApp {
 
   import com.knowledge.ui.menus._
+  import scalafx.scene.control._
 
   stage = new PrimaryStage
 
@@ -43,13 +43,13 @@ object GraphMenu extends JFXApp{
   scrollPane.content = vb
   scrollPane.hbarPolicy = ScrollBarPolicy.Always
   scrollPane.vbarPolicy = ScrollBarPolicy.AsNeeded
-  
-  stage.scene = new Scene(borderPane,1000,1000)
 
-  def addItemToVB(node:Node) : Unit = {
+  stage.scene = new Scene(borderPane, 1000, 1000)
+
+  def addItemToVB(node: Node): Unit = {
     val separator = new Separator()
     separator.setMaxWidth(Double.MaxValue)
-    vb.children.addAll(node,separator)
+    vb.children.addAll(node, separator)
   }
 
 }

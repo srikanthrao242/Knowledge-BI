@@ -7,10 +7,9 @@ import org.apache.spark.sql._
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 
 
+object SparkGraph {
 
-object SparkGraph{
-
-  def constructGraph(triples: RDD[Triple]):Graph[Node,Node]={
+  def constructGraph(triples: RDD[Triple]): Graph[Node, Node] = {
 
     val rs = triples.map(triple => (triple.getSubject, triple.getPredicate, triple.getObject))
     val indexedMap = (rs.map(_._1) union rs.map(_._3)).distinct.zipWithUniqueId()
