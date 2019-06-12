@@ -1,50 +1,117 @@
+/*
+
+ * */
 package com.knowledge.server.database.fuseki
 
+import java.io.File
+
+import com.google.gson.Gson
+import com.knowledge.server.database.GraphServers
 import com.knowledge.ui.controllers.TableCreation
 import com.knowledge.ui.prefuse.GraphView
-import org.apache.jena.query.{QueryExecutionFactory, ResultSet}
+import org.apache.http.impl.client.BasicResponseHandler
+import org.apache.http.{HttpHost, HttpRequest, HttpResponse}
+import org.apache.http.message.BasicHttpRequest
+import org.apache.jena.query.{DatasetAccessorFactory, QueryExecutionFactory, ResultSet}
+import org.apache.jena.rdf.model.{Model, ModelFactory}
 import org.apache.jena.rdfconnection.{RDFConnection, RDFConnectionFactory}
+import org.apache.jena.riot.RDFLanguages
+import org.apache.jena.riot.web.HttpOp
+import org.apache.jena.tdb.TDBFactory
 
-import scala.collection.mutable.ListBuffer
+import spray.json._
+import DefaultJsonProtocol._
 
-class Fuseki {
+case class DsArray(`ds.name`: String, `ds.state`: Boolean)
+case class DS(datasets: List[DsArray])
+
+object DsImplicits {
+  implicit val dsArrjson = jsonFormat2(DsArray)
+  implicit val dsjson = jsonFormat1(DS)
+}
+
+class Fuseki extends GraphServers {
   import Fuseki._
 
-  def getConnection(): RDFConnection = {
-    SERVICE_URL = SERVICE_URL.concat(if (Destination.startsWith("/")) Destination else "/" + Destination)
-    RDFConnectionFactory.connectFuseki(Destination)
-  }
-
-  def sparqlSelect(query: String, table: Boolean, graph: Boolean): ResultSet = {
-    val q = QueryExecutionFactory.sparqlService(SERVICE_URL, query)
-    val results = q.execSelect()
-    if (table) new TableCreation().createTableOfResultSet(results)
-    if (graph) new GraphView().createGraph(results, query)
-    results
-  }
-
-  def close(conn: RDFConnection): Unit =
-    try {
-      conn.close()
-    } catch {
-      case e: Exception =>
-        println("Error closing repository connection: " + e)
-        e.printStackTrace()
+  private val LOCAL: String = "local"
+  private val HTTP: String = "http"
+  private val model: Option[Model] =
+    if (LOCAL.equalsIgnoreCase(dataAccessMode)) {
+      val ds = TDBFactory.createDataset(path)
+      Some(ds.getNamedModel(modelName))
+    } else if (HTTP.equalsIgnoreCase(dataAccessMode)) {
+      val dsAccessor =
+        DatasetAccessorFactory.createHTTP(serviceUri + s"/$dataset")
+      Some(dsAccessor.getModel())
+    } else {
+      None
     }
 
-  def closeAll(): Unit =
-    while (toClose.nonEmpty) {
-      val conn = toClose.head
-      close(conn)
-      toClose -= conn
+  private[fuseki] def getConnection: RDFConnection =
+    RDFConnectionFactory.connect(serviceUri)
+
+  def getDs(): Unit = {
+    val client = HttpOp.getDefaultHttpClient
+    val requet = new BasicHttpRequest("GET", "/$/datasets")
+    val resp: HttpResponse =
+      client.execute(HttpHost.create(serviceUri), requet)
+    val hnd = new BasicResponseHandler().handleResponse(resp)
+  }
+
+  def putDs(dsName: String): Unit = {
+    val client = HttpOp.getDefaultHttpClient
+    val requet =
+      new BasicHttpRequest("POST", "/$/datasets?dbType=tdb&dbName=" + dsName)
+    client.execute(HttpHost.create(serviceUri), requet)
+  }
+
+  override def upload(graphName: String, path: String): Unit = {
+    val file = new File(path)
+    val model = ModelFactory.createDefaultModel()
+    val lang = RDFLanguages.filenameToLang(path)
+    import java.io.FileInputStream
+    try {
+      val in = new FileInputStream(file)
+      try model.read(in, "", lang.getName)
+      finally if (in != null) in.close()
+    }
+    val accessor = DatasetAccessorFactory
+      .createHTTP(serviceUri)
+    accessor.putModel(model)
+  }
+
+  override def sparql(
+      query: String,
+      table: Boolean,
+      graph: Boolean
+    ): Option[ResultSet] =
+    try {
+      val qe =
+        QueryExecutionFactory.sparqlService(serviceUri + s"/$dataset", query)
+      try {
+        val results: ResultSet = qe.execSelect()
+        if (table) new TableCreation().createTableOfResultSet(results)
+        if (graph) new GraphView().createGraph(results, query)
+        Some(results)
+      } catch {
+        case e: Exception =>
+          e.printStackTrace()
+          None
+      } finally {
+        qe.close()
+      }
+    } catch {
+      case e: Exception =>
+        e.printStackTrace()
+        None
     }
 
 }
 
 object Fuseki {
-  var HOST = "localhost"
-  var PORT = "3030"
-  var SERVICE_URL: String = "http://" + HOST + ":" + PORT
-  var Destination = "/"
-  val toClose = new ListBuffer[RDFConnection]()
+  var modelName: String = ""
+  var path: String = ""
+  var dataAccessMode: String = ""
+  var serviceUri: String = ""
+  var dataset: String = ""
 }

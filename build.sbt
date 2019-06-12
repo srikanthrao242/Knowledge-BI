@@ -1,3 +1,12 @@
+/*   
+* egal Notice
+ *
+ * Confidential and Proprietary materials of srikanth rao.
+ *
+ * Copyright (c) 2019, all rights reserved.
+ *
+* */
+
 name := "Knowledge-BI"
 
 version := "1.0"
@@ -31,6 +40,11 @@ lazy val excludeShapeless = ExclusionRule(organization = "com.chuusai")
 lazy val excludeTypeLevel = ExclusionRule(organization = "org.typelevel")
 lazy val excludeJacksonCore = ExclusionRule(organization = "com.fasterxml.jackson.core")
 lazy val excludeJacksonModule = ExclusionRule(organization = "com.fasterxml.jackson.module")
+lazy val excludeTest = ExclusionRule(organization = "org.scalatest")
+lazy val excludeTest1 = ExclusionRule(organization = "org.scalactic")
+
+val excludeInSansa =
+  List(excludeSpark, excludeScalaCom, excludeSparkBench, excludeShapeless, excludeTypeLevel, excludeTest, excludeTest1)
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-library" % scalaVersion.value,
@@ -67,11 +81,14 @@ libraryDependencies ++= Seq(
   "org.scalafx" %% "scalafx" % "12.0.1-R17",
   "org.scalafx" %% "scalafxml-core-sfx8" % "0.4",
   "org.scala-lang.modules" %% "scala-async" % "0.10.0",
-  "net.sansa-stack" % "sansa-owl-spark_2.11" % sansaVersion excludeAll (excludeSpark, excludeScalaCom, excludeSparkBench, excludeShapeless, excludeTypeLevel),
-  "net.sansa-stack" % "sansa-inference-spark_2.11" % sansaVersion excludeAll (excludeSpark, excludeScalaCom, excludeSparkBench, excludeShapeless, excludeTypeLevel),
-  "net.sansa-stack" % "sansa-query-spark_2.11" % sansaVersion excludeAll (excludeSpark, excludeScalaCom, excludeSparkBench, excludeShapeless, excludeTypeLevel),
-  "net.sansa-stack" % "sansa-ml-spark_2.11" % sansaVersion excludeAll (excludeSpark, excludeScalaCom, excludeSparkBench, excludeShapeless, excludeTypeLevel),
-  "net.sansa-stack" % "sansa-rdf-spark_2.11" % sansaVersion excludeAll (excludeSpark, excludeScalaCom, excludeSparkBench, excludeShapeless, excludeTypeLevel)
+  "io.spray" %% "spray-json" % "1.3.5",
+  "org.scalatest" %% "scalatest" % "3.2.0-SNAP10" % Test,
+  "org.scalacheck" %% "scalacheck" % "1.14.0" % Test,
+  "net.sansa-stack" % "sansa-owl-spark_2.11" % sansaVersion excludeAll (excludeInSansa: _*),
+  "net.sansa-stack" % "sansa-inference-spark_2.11" % sansaVersion excludeAll (excludeInSansa: _*),
+  "net.sansa-stack" % "sansa-query-spark_2.11" % sansaVersion excludeAll (excludeInSansa: _*),
+  "net.sansa-stack" % "sansa-ml-spark_2.11" % sansaVersion excludeAll (excludeInSansa: _*),
+  "net.sansa-stack" % "sansa-rdf-spark_2.11" % sansaVersion excludeAll (excludeInSansa: _*)
 )
 
 fork := true

@@ -1,7 +1,5 @@
-addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.2")
-addSbtPlugin("com.lucidchart"       % "sbt-scalafmt"           % "1.10")
-addSbtPlugin("com.typesafe.sbt"     % "sbt-aspectj"            % "0.10.0")
-addSbtPlugin("io.spray"             %% "sbt-revolver"          % "0.9.0")
-addSbtPlugin("com.github.casualjim" % "sbt-jelastic-deploy"    % "0.1.4")
-addSbtPlugin("org.scoverage"        % "sbt-scoverage"          % "1.5.1")
-addSbtPlugin("org.scalastyle"       %% "scalastyle-sbt-plugin" % "1.0.0")
+/*
+
+ * */
+addSbtPlugin("org.scalameta"  % "sbt-scalafmt"           % "2.0.0")
+addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")

@@ -1,11 +1,13 @@
-package com.knowledge.server.database.AllegroGraph
+/*
 
-import java.util
+ * */
+package com.knowledge.server.database.AllegroGraph
 
 import scala.async.Async.async
 import scala.concurrent.ExecutionContext.Implicits.global
 import com.franz.agraph.jena.{AGGraphMaker, AGModel, AGQueryExecutionFactory, AGQueryFactory}
 import com.franz.agraph.repository.{AGRepositoryConnection, AGServer}
+import com.knowledge.server.database.GraphServers
 import com.knowledge.ui.controllers.TableCreation
 import com.knowledge.ui.prefuse.GraphView
 import org.apache.jena.query.ResultSet
@@ -13,7 +15,7 @@ import org.apache.jena.query.ResultSet
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
 
-class AG(CATALOG_ID: String, REPOSITORY_ID: String) {
+class AG(CATALOG_ID: String, REPOSITORY_ID: String) extends GraphServers {
 
   import AG._
 
@@ -24,7 +26,7 @@ class AG(CATALOG_ID: String, REPOSITORY_ID: String) {
    * Creating Repository
    * */
 
-  def repository(close: Boolean): AGGraphMaker = {
+  private def repository(close: Boolean): Option[AGGraphMaker] = {
     val server = new AGServer(SERVER_URL, USERNAME, PASSWORD)
     val catalog = server.getCatalog(CATALOG_ID)
     val repository = catalog.createRepository(REPOSITORY_ID)
@@ -36,10 +38,9 @@ class AG(CATALOG_ID: String, REPOSITORY_ID: String) {
       maker.close()
       conn.close()
       repository.shutDown()
-      null
-    }
-    else {
-      maker
+      None
+    } else {
+      Some(maker)
     }
   }
 
@@ -47,18 +48,17 @@ class AG(CATALOG_ID: String, REPOSITORY_ID: String) {
    * Get AGMODEL
    * */
 
-  def agModel(close: Boolean): AGModel = {
-    val maker = repository(false)
+  def agModel(close: Boolean): Option[AGModel] = {
+    val maker = repository(false).get
     val graph = maker.getGraph
     val model = new AGModel(graph)
     if (close) {
       model.close()
       graph.close()
       maker.close()
-      null
-    }
-    else {
-      model
+      None
+    } else {
+      Some(model)
     }
   }
 
@@ -68,8 +68,12 @@ class AG(CATALOG_ID: String, REPOSITORY_ID: String) {
    *
    * */
 
-  def sparql(query: String, table: Boolean, graph: Boolean): ResultSet = {
-    val model = agModel(false)
+  override def sparql(
+      query: String,
+      table: Boolean,
+      graph: Boolean
+    ): Option[ResultSet] = {
+    val model = agModel(false).get
     try {
       val sparql = AGQueryFactory.create(query)
       val qe = AGQueryExecutionFactory.create(sparql, model)
@@ -78,42 +82,42 @@ class AG(CATALOG_ID: String, REPOSITORY_ID: String) {
         // val results = ResultSetFactory.copyResults(qe.execSelect())
         if (table) new TableCreation().createTableOfResultSet(results)
         if (graph) new GraphView().createGraph(results, query)
-        results
+        Some(results)
       } catch {
         case e: Exception =>
           e.printStackTrace()
-          null
+          None
       } finally {
         qe.close()
       }
     } catch {
       case e: Exception =>
         e.printStackTrace()
-        null
+        None
     } finally {
       model.close()
     }
   }
 
-  def close(conn: AGRepositoryConnection): Unit =
+  private def close(conn: AGRepositoryConnection): Unit =
     try {
       conn.close()
     } catch {
       case e: Exception =>
-        println("Error closing repository connection: " + e)
         e.printStackTrace()
     }
 
-  def closeBeforeExit(conn: AGRepositoryConnection): Unit =
+  private def closeBeforeExit(conn: AGRepositoryConnection): Unit =
     toClose += conn
 
-  def closeAll(): Unit =
+  private def closeAll(): Unit =
     while (toClose.nonEmpty) {
       val conn = toClose.head
       close(conn)
       toClose -= conn
     }
 
+  override def upload(graphName: String, path: String): Unit = {}
 }
 
 object AG {
@@ -142,8 +146,7 @@ object AG {
     val catalog_ag = server.getCatalog(catalog)
     if (catalog_ag != null) {
       catalog_ag.listRepositories().asScala.toArray
-    }
-    else {
+    } else {
       Array[String]()
     }
   }
