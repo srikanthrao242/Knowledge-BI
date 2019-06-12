@@ -1,3 +1,5 @@
+/*
+ */
 package com.knowledge.ui
 
 import java.net.URL
@@ -27,19 +29,29 @@ object Util {
     dialogStage.show()
   }
 
-  def createMenuItemAndLoad(menuName: String, fxmlPath: String, menu: Menu, accelerator: String): Unit = {
+  def createMenuItemAndLoad(
+      menuName: String,
+      fxmlPath: String,
+      menu: Menu,
+      accelerator: String
+    ): Unit = {
     val mi = new MenuItem(menuName)
     val fxml: URL = getClass.getResource(fxmlPath)
     if (fxmlPath.nonEmpty) mi.onAction = handle {
       Platform.runLater(loadFXML(fxml))
     }
-    if (accelerator.nonEmpty) mi.accelerator = KeyCombination.keyCombination(accelerator)
+    if (accelerator.nonEmpty)
+      mi.accelerator = KeyCombination.keyCombination(accelerator)
     menu.items.add(mi)
   }
 
-  def sparql(catalog: String, repository: String, query: String): Future[ResultSet] = async {
+  def sparql(
+      catalog: String,
+      repository: String,
+      query: String
+    ): Future[ResultSet] = async {
     val ag = new AG(catalog, repository)
-    val model = ag.agModel(false)
+    val model = ag.agModel(false).get
     try {
       val sparql = AGQueryFactory.create(query)
 

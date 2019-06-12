@@ -1,3 +1,5 @@
+/*
+ */
 package com.knowledge.ui.charts
 
 import com.franz.agraph.jena.{AGQueryExecutionFactory, AGQueryFactory}
@@ -14,9 +16,14 @@ import scala.async.Async.async
 
 class KPie {
 
-  def sparql(catalog: String, repository: String, query: String, pane: StackPane): Unit = async {
+  def sparql(
+      catalog: String,
+      repository: String,
+      query: String,
+      pane: StackPane
+    ): Unit = async {
     val ag = new AG(catalog, repository)
-    val model = ag.agModel(false)
+    val model = ag.agModel(false).get
     try {
       val sparql = AGQueryFactory.create(query)
       val qe = AGQueryExecutionFactory.create(sparql, model)

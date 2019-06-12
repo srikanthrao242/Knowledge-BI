@@ -1,3 +1,6 @@
+/*
+
+ * */
 package com.knowledge.ui.menus
 
 import com.franz.agraph.jena.{AGQueryExecutionFactory, AGQueryFactory}
@@ -27,7 +30,7 @@ object NamedGraphs {
 
   def sparql(catalog: String, repository: String, query: String): Unit = {
     val ag = new AG(catalog, repository)
-    val model = ag.agModel(false)
+    val model = ag.agModel(false).get
     try {
       val sparql = AGQueryFactory.create(query)
       val qe = AGQueryExecutionFactory.create(sparql, model)

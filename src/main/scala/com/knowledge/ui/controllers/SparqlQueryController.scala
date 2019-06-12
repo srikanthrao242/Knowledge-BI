@@ -1,3 +1,6 @@
+/*
+ */
+
 package com.knowledge.ui.controllers
 
 import com.knowledge.server.database.AllegroGraph.AG
@@ -9,13 +12,15 @@ import scalafxml.core.macros.sfxml
 import com.knowledge.ui._
 
 @sfxml
-class SparqlQueryController(private var vbox: VBox, private var queryArea: TextArea, private var hbox: HBox) {
+class SparqlQueryController(
+    private var vbox: VBox,
+    private var queryArea: TextArea,
+    private var hbox: HBox) {
 
   def gerServerObject(): GraphServers =
     if (server == "AG") {
       new AG("catalyst_ds_16", "catalyst_ds_16")
-    }
-    else {
+    } else {
       new Fuseki
     }
 

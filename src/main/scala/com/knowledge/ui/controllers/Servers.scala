@@ -1,3 +1,6 @@
+/*
+
+ * */
 package com.knowledge.ui.controllers
 
 import com.franz.agraph.jena.{AGQueryExecutionFactory, AGQueryFactory}
@@ -10,21 +13,23 @@ import com.knowledge.ui.menus.NamedGraphs
 import org.apache.jena.query.ResultSet
 import scalafx.application.Platform
 import scalafx.collections.ObservableBuffer
-import scalafx.scene.control.{ListView, ProgressIndicator, TextField}
+import scalafx.scene.control.{ChoiceBox, ListView, ProgressIndicator, TextField}
 import scalafxml.core.macros.sfxml
 import com.knowledge.ui._
 
 @sfxml
 class Servers(
-  private var serverIP: TextField,
-  private var serverPort: TextField,
-  private var serverUser: TextField,
-  private var serverPassword: TextField,
-  private var catalogView: ListView[String],
-  private var RepositoryView: ListView[String],
-  private var fusekiServerIP: TextField,
-  private var fusekiServerPort: TextField,
-  private var fusekiDestination: TextField) {
+    private var serverIP: TextField,
+    private var serverPort: TextField,
+    private var serverUser: TextField,
+    private var serverPassword: TextField,
+    private var catalogView: ListView[String],
+    private var RepositoryView: ListView[String],
+    private var fusekiServerUri: TextField,
+    private var fusekiModelName: TextField,
+    private var fusekiAccessModel: ChoiceBox[String],
+    private var fusekiPath: TextField,
+    private var fusekiDs: TextField) {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -38,7 +43,8 @@ class Servers(
     pb.visible = false
     AG.listCatalogs.onComplete(v => {
       v.get match {
-        case catalogs: Array[String] => Platform.runLater(catalogView.items = ObservableBuffer(catalogs: _*))
+        case catalogs: Array[String] =>
+          Platform.runLater(catalogView.items = ObservableBuffer(catalogs: _*))
       }
     })
 
@@ -50,15 +56,20 @@ class Servers(
       .onComplete(v => {
         v.get match {
           case repositories: Array[String] =>
-            if (repositories.isEmpty) KAlert("No Repositories exists...", GraphMenu.stage)
-            else Platform.runLater(RepositoryView.items = ObservableBuffer(repositories: _*))
+            if (repositories.isEmpty) {
+              KAlert("No Repositories exists...", GraphMenu.stage)
+            } else {
+              Platform.runLater(
+                RepositoryView.items = ObservableBuffer(repositories: _*)
+              )
+            }
         }
       })
   }
 
   def sparql(catalog: String, repository: String, query: String): Unit = {
     val ag = new AG(catalog, repository)
-    val model = ag.agModel(false)
+    val model = ag.agModel(false).get
     try {
       val sparql = AGQueryFactory.create(query)
       val qe = AGQueryExecutionFactory.create(sparql, model)
@@ -82,17 +93,17 @@ class Servers(
       val repository = repositories.get(0)
       val query = "SELECT DISTINCT ?g{GRAPH ?g{?s ?p ?o}}"
       sparql(catalog, repository, query)
-    }
-    else {
-      println("No catalog and repository selected")
+    } else {
       KAlert("Select catalog and repository.... ", GraphMenu.stage)
     }
   }
 
   def saveFusekiConf(): Unit = {
-    Fuseki.HOST = fusekiServerIP.text.get()
-    Fuseki.PORT = fusekiServerPort.text.get()
-    Fuseki.Destination = fusekiDestination.text.get()
+    Fuseki.serviceUri = fusekiServerUri.text.get()
+    Fuseki.modelName = fusekiModelName.text.get()
+    Fuseki.path = fusekiPath.text.get()
+    Fuseki.dataAccessMode = fusekiAccessModel.getSelectionModel.getSelectedItem
+    Fuseki.dataset = fusekiDs.text.get()
     server = "Fuseki"
   }
 

@@ -1,3 +1,7 @@
+/*
+
+ * */
+
 package com.knowledge.ui.controllers
 
 import com.franz.agraph.jena.{AGQueryExecutionFactory, AGQueryFactory}
@@ -17,11 +21,11 @@ import scala.async.Async.{async, await}
 
 @sfxml
 class Charts(
-  private val predicate_chart: ComboBox[String],
-  private val measure_chart: ComboBox[String],
-  private val chart_chart: ComboBox[String],
-  private val chart_graph: ComboBox[String],
-  private val chart_container: Pane) {
+    private val predicate_chart: ComboBox[String],
+    private val measure_chart: ComboBox[String],
+    private val chart_chart: ComboBox[String],
+    private val chart_graph: ComboBox[String],
+    private val chart_container: Pane) {
 
   val stackPane = new StackPane()
   // stackPane.layoutX = 133.0
@@ -45,7 +49,7 @@ class Charts(
 
   def sparql(catalog: String, repository: String, query: String): Unit = async {
     val ag = new AG(catalog, repository)
-    val model = ag.agModel(false)
+    val model = ag.agModel(false).get
     try {
       val sparql = AGQueryFactory.create(query)
       val qe = AGQueryExecutionFactory.create(sparql, model)
