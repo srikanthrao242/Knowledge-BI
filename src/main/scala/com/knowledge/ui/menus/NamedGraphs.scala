@@ -10,6 +10,7 @@ import com.knowledge.ui.GraphMenu
 import org.apache.jena.query.ResultSet
 import scalafx.scene.control.{Menu, MenuItem, TextInputDialog}
 import org.apache.jena.graph.Triple
+import scalafx.application.Platform
 
 import scala.util.Try
 
@@ -76,7 +77,7 @@ object NamedGraphs {
 
   def addGraphs(graphs: List[String]): Unit = {
     graphs.foreach(addMenus)
-    GraphMenu.menuBar.menus.add(menu)
+    Platform.runLater(GraphMenu.menuBar.menus.add(menu))
   }
 
 }
