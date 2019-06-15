@@ -25,11 +25,10 @@ import scalafx.embed.swing.SwingNode
 import scala.util.hashing.MurmurHash3
 import scala.collection.JavaConverters._
 
-case class Patterns(
-    subject: String,
-    predicate: String,
-    obj: String,
-    context: String)
+case class Patterns(subject: String,
+                    predicate: String,
+                    obj: String,
+                    context: String)
 
 class GraphView {
 
@@ -61,10 +60,10 @@ class GraphView {
   }
 
   def createVerticesEdges(
-      graph: SparseMultigraph[PNode, PLink],
-      patterns: List[Patterns],
-      qs: QuerySolution
-    ): Unit = {
+    graph: SparseMultigraph[PNode, PLink],
+    patterns: List[Patterns],
+    qs: QuerySolution
+  ): Unit = {
     val qVar = qs.varNames().asScala.toList
     patterns.foreach(pat => {
       val sub = pat.subject
@@ -110,9 +109,9 @@ class GraphView {
   }
 
   def getGraph(
-      resultSet: ResultSet,
-      sparqlQuery: String
-    ): SparseMultigraph[PNode, PLink] = {
+    resultSet: ResultSet,
+    sparqlQuery: String
+  ): SparseMultigraph[PNode, PLink] = {
     val graph: SparseMultigraph[PNode, PLink] =
       new SparseMultigraph[PNode, PLink]()
     val patterns = getStatementPatterns(sparqlQuery)
