@@ -6,25 +6,25 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="500.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.knowledge.ui.controllers.Charts">
-   <children>
-      <TitledPane animated="false" prefHeight="500.0" prefWidth="1500.0" text="Charts">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-               <children>
-                  <VBox prefHeight="372.0" prefWidth="133.0">
-                     <children>
-                        <ComboBox fx:id="predicate_chart" prefWidth="150.0" promptText="predicate" />
-                        <ComboBox fx:id="measure_chart" prefWidth="150.0" promptText="Measure" />
-                        <ComboBox fx:id="chart_chart" prefWidth="150.0" promptText="Charts" />
-                        <ComboBox fx:id="chart_graph" prefWidth="150.0" promptText="Graphs" />
-                        <Button fx:id="createChart" onAction="#createCharts" mnemonicParsing="false" prefHeight="25.0" prefWidth="132.0" text="create" />
-                     </children>
-                  </VBox>
-                  <Pane fx:id="chart_container" layoutX="133.0"  prefHeight="500.0" prefWidth="1500.0" />
-               </children>
-            </AnchorPane>
-        </content>
-      </TitledPane>
-   </children>
+<AnchorPane prefHeight="500.0" prefWidth="1500.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.knowledge.ui.controllers.Charts">
+  <children>
+    <TitledPane animated="false" prefHeight="500.0" prefWidth="3000.0" text="Charts">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+          <children>
+            <VBox prefHeight="372.0" prefWidth="133.0">
+              <children>
+                <ComboBox fx:id="predicate_chart" prefWidth="150.0" promptText="predicate" />
+                <ComboBox fx:id="measure_chart" prefWidth="150.0" promptText="Measure" />
+                <ComboBox fx:id="chart_chart" prefWidth="150.0" promptText="Charts" />
+                <ComboBox fx:id="chart_graph" prefWidth="150.0" promptText="Graphs" />
+                <Button fx:id="createChart" mnemonicParsing="false" onAction="#createCharts" prefHeight="25.0" prefWidth="132.0" text="create" />
+              </children>
+            </VBox>
+            <Pane fx:id="chart_container" layoutX="133.0" prefHeight="500.0" prefWidth="1500.0" />
+          </children>
+        </AnchorPane>
+      </content>
+    </TitledPane>
+  </children>
 </AnchorPane>

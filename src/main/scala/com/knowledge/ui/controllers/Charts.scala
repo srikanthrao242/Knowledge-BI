@@ -123,11 +123,9 @@ class Charts(private val predicate_chart: ComboBox[String],
     val query =
       s"select distinct ?$preName ($measure(?o) as ?$measure) {graph<$graph>{?$preName ?p ?o} filter(?p = <$pre>)} group by ?$preName"
     if (cType == "Pie") {
-      stackPane.resize
-      new KPie().createIn(query, stackPane)
+      new KPie().createIn(query, stackPane, preName, measure)
     } else if (cType == "HBar") {
-      stackPane.resize
-      new HorizontalBar().createIn(query, stackPane)
+      new HorizontalBar().createIn(query, stackPane, preName, measure)
     }
 
   }

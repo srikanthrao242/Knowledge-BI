@@ -53,7 +53,6 @@ class ReadFiles extends SparkCoreModule {
       .option("inferSchema", "true")
       .option("header", "true")
       .load(csv)
-    val categories = df.columns
     val mappingDf = readJson(mappingFile)
     mappingDf.createOrReplaceTempView("mappingFile")
     mappingDf.printSchema()
