@@ -15,7 +15,8 @@ class ReadFilesSpec extends FlatSpec {
     val df = rf.readJson(
       "F:\\IdeaProjects\\Knowledge-BI\\src\\test\\resources\\oilandgasMapping.json"
     )
-    df.select(explode(array(col("relations.*")))).columns.map(println)
+    df.select(explode(array(col("relations")))).columns.foreach(println)
+
     //df.show(false)
   }
 
