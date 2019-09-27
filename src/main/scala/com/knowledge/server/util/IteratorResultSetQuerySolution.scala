@@ -1,9 +1,11 @@
+/**/
 package com.knowledge.server.util
 
 import org.apache.jena.query.{QuerySolution, ResultSet}
 import org.apache.jena.graph.Triple
 
-class IteratorResultSetQuerySolution(rs: ResultSet) extends Iterator[QuerySolution]{
+class IteratorResultSetQuerySolution(rs: ResultSet)
+  extends Iterator[QuerySolution] {
 
   override def hasNext: Boolean = rs.hasNext
 
@@ -11,17 +13,20 @@ class IteratorResultSetQuerySolution(rs: ResultSet) extends Iterator[QuerySoluti
 
 }
 
-class IteratorResultSetTriples(rs: ResultSet) extends Iterator[Triple]{
+class IteratorResultSetTriples(rs: ResultSet) extends Iterator[Triple] {
 
   override def hasNext: Boolean = rs.hasNext
 
   override def next(): Triple = {
     val qs = rs.next()
-    Triple.create(qs.get("s").asNode(),qs.get("p").asNode(),qs.get("o").asNode())
+    Triple.create(qs.get("s").asNode(),
+                  qs.get("p").asNode(),
+                  qs.get("o").asNode())
   }
 }
 
-class IteratorResultSetString(rs: ResultSet,col:String) extends Iterator[String]{
+class IteratorResultSetString(rs: ResultSet, col: String)
+  extends Iterator[String] {
 
   override def hasNext: Boolean = rs.hasNext
 
@@ -30,6 +35,3 @@ class IteratorResultSetString(rs: ResultSet,col:String) extends Iterator[String]
     qs.get(col).toString
   }
 }
-
-
-

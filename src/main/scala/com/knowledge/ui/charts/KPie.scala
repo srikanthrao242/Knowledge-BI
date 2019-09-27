@@ -14,24 +14,28 @@ import scalafx.scene.layout.StackPane
 
 class KPie extends Charts {
 
-  override def createIn(query: String, pane: StackPane): Unit =
+  override def createIn(query: String,
+                        pane: StackPane,
+                        predicate: String,
+                        measure: String): Unit =
     if (ui.server.equalsIgnoreCase("fuseki")) {
-      sparqlFuseki(query, pane)
+      sparqlFuseki(query, pane, predicate, measure)
     } else {
-      sparqlAG(AG.CATALOG, AG.REPOSITORY, query, pane)
+      sparqlAG(AG.CATALOG, AG.REPOSITORY, query, pane, predicate, measure)
     }
 
-  override def createUI(result: ResultSet, pane: StackPane): Unit = {
+  override def createUI(result: ResultSet,
+                        pane: StackPane,
+                        preN: String,
+                        mes: String): Unit = {
     val qs = new IteratorResultSetQuerySolution(result).toList
-    import scala.collection.JavaConverters._
-    val variables = qs.head.varNames().asScala.toList
     val pieChartData = ObservableBuffer(qs.map { v: QuerySolution =>
       val measure = try {
-        v.getLiteral(variables.last).getDouble
+        v.getLiteral(mes).getDouble
       } catch {
         case e: Exception => 0.0
       }
-      val pre = v.get(variables.head).toString
+      val pre = v.getResource(preN).getURI
       val predicate = if (pre.contains("#")) {
         pre.split("#").last
       } else {

@@ -12,13 +12,21 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.async.Async.async
 
 trait Charts {
-  def createIn(query: String, pane: StackPane): Unit
-  def createUI(result: ResultSet, pane: StackPane): Unit
+  def createIn(query: String,
+               pane: StackPane,
+               predicate: String,
+               measure: String): Unit
+  def createUI(result: ResultSet,
+               pane: StackPane,
+               predicate: String,
+               measure: String): Unit
   def sparqlAG(
     catalog: String,
     repository: String,
     query: String,
-    pane: StackPane
+    pane: StackPane,
+    predicate: String,
+    measure: String
   ): Unit = async {
     val ag = new AG(catalog, repository)
     val model = ag.agModel(false).get
@@ -27,7 +35,7 @@ trait Charts {
       val qe = AGQueryExecutionFactory.create(sparql, model)
       try {
         val ib: ResultSet = qe.execSelect()
-        createUI(ib, pane)
+        createUI(ib, pane, predicate, measure)
       } finally {
         qe.close()
       }
@@ -38,14 +46,16 @@ trait Charts {
 
   def sparqlFuseki(
     query: String,
-    pane: StackPane
+    pane: StackPane,
+    predicate: String,
+    measure: String
   ): Unit = async {
     try {
       val qe =
         QueryExecutionFactory.sparqlService(serviceUri + s"/$dataset", query)
       try {
         val results: ResultSet = qe.execSelect()
-        createUI(results, pane)
+        createUI(results, pane, predicate, measure)
       } catch {
         case e: Exception =>
           e.printStackTrace()

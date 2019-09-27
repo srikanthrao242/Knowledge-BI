@@ -69,17 +69,16 @@ class AG(CATALOG_ID: String, REPOSITORY_ID: String) extends GraphServers {
    * */
 
   override def sparql(
-      query: String,
-      table: Boolean,
-      graph: Boolean
-    ): Option[ResultSet] = {
+    query: String,
+    table: Boolean,
+    graph: Boolean
+  ): Option[ResultSet] = {
     val model = agModel(false).get
     try {
       val sparql = AGQueryFactory.create(query)
       val qe = AGQueryExecutionFactory.create(sparql, model)
       try {
         val results: ResultSet = qe.execSelect()
-        // val results = ResultSetFactory.copyResults(qe.execSelect())
         if (table) new TableCreation().createTableOfResultSet(results)
         if (graph) new GraphView().createGraph(results, query)
         Some(results)

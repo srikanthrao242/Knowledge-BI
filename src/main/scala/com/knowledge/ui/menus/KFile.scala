@@ -1,3 +1,4 @@
+/**/
 package com.knowledge.ui.menus
 
 import com.knowledge.ui.Util
@@ -15,8 +16,14 @@ object KFile {
     new_.accelerator = KeyCombination.keyCombination("Ctrl+N")
     menu.items.add(new_)
 
-    Util.createMenuItemAndLoad("File", "./fxml/FileChooser.fxml", menu, "Ctrl+F")
-    Util.createMenuItemAndLoad("Open Triple Store", "./fxml/Servers.fxml", menu, "Ctrl+O")
+    Util.createMenuItemAndLoad("File",
+                               "./fxml/FileChooser.fxml",
+                               menu,
+                               "Ctrl+F")
+    Util.createMenuItemAndLoad("Open Triple Store",
+                               "./fxml/Servers.fxml",
+                               menu,
+                               "Ctrl+O")
 
     val exit = new MenuItem("Quit")
     exit.setAccelerator(KeyCombination.keyCombination("Ctrl+Q"))

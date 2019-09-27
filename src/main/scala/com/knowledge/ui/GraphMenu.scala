@@ -1,3 +1,4 @@
+/**/
 package com.knowledge.ui
 
 import javafx.scene.Node
@@ -10,7 +11,6 @@ import scalafx.scene.layout.{BorderPane, VBox}
 /**
   * Created by srikanth on 11/1/18.
   */
-
 object GraphMenu extends JFXApp {
 
   import com.knowledge.ui.menus._

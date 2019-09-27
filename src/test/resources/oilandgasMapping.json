@@ -1,0 +1,60 @@
+{
+    "predicates": {
+        "API_No": "http://www.oilandgas.com/api_no",
+        "Facility_ID": "http://www.oilandgas.com/facility_id",
+        "County": "http://www.geospatial.com/country",
+        "Well_Name": "http://www.oilandgas.com/well_name",
+        "Qsec_location": "http://www.oilandgas.com/qsec_location",
+        "Reported_Well_Status_A": "http://www.oilandgas.com/reported_well_status",
+        "Date_Production": "http://www.oilandgas.com/date_production",
+        "Prod_Days": "http://www.oilandgas.com/prod_days",
+        "Oil_bbls": "http://www.oilandgas.com/oil_bbls",
+        "Total_Gas_mcf": "http://www.oilandgas.com/total_gs_mcf",
+        "Marketed_Gas_mcf": "http://www.oilandgas.com/marketed_gas_mcf",
+        "Water_bbls": "http://www.oilandgas.com/water_bbls",
+        "Total_oil_On_Hand_End_Month": "http://www.oilandgas.com/total_oil_on_hand_end_month",
+        "Prod_Comments": "http://www.oilandgas.com/prod_comments",
+        "Reported_Operator_Name": "http://www.oilandgas.com/reported_operator_name",
+        "Well_Field": "http://www.oilandgas.com/well_field",
+        "Enhanced_Recovery_Unit": "http://www.oilandgas.com/enhanced_recovery_unit",
+        "Production_Confidential": "http://www.oilandgas.com/production_confidential",
+        "Export_Date": "http://www.oilandgas.com/export_date"
+    },
+    "prefixes": {
+        "API_No": "http://www.oilandgas.com/api_no/ ",
+        "Facility_ID": "http://www.oilandgas.com/facility_id/ ",
+        "County": "http://www.geospatial.com/country/ ",
+        "Well_Name": "http://www.oilandgas.com/well_name/ ",
+        "Qsec_location": "http://www.oilandgas.com/qsec_location/ ",
+        "Reported_Well_Status_A": "http://www.oilandgas.com/reported_well_status/ ",
+        "Total_oil_On_Hand_End_Month": "http://www.oilandgas.com/total_oil_on_hand_end_month/ ",
+        "Prod_Comments": "http://www.oilandgas.com/prod_comments/ ",
+        "Reported_Operator_Name": "http://www.oilandgas.com/reported_operator_name/ ",
+        "Well_Field": "http://www.oilandgas.com/well_field/ ",
+        "Enhanced_Recovery_Unit": "http://www.oilandgas.com/enhanced_recovery_unit/ ",
+        "Production_Confidential": "http://www.oilandgas.com/production_confidential/ "
+    },
+    "relations": {
+        "API_No": [
+            "Facility_ID",
+            "County",
+            "Well_Name",
+            "Qsec_location",
+            "Reported_Well_Status_A",
+            "Date_Production",
+            "Prod_Days",
+            "Oil_bbls",
+            "Total_Gas_mcf",
+            "Marketed_Gas_mcf",
+            "Water_bbls",
+            "Total_oil_On_Hand_End_Month",
+            "Prod_Comments",
+            "Reported_Operator_Name",
+            "Well_Field",
+            "Enhanced_Recovery_Unit",
+            "Production_Confidential",
+            "Export_Date"
+        ]
+    },
+    "grahName": "http://www.oilandgas.com/data"
+}
