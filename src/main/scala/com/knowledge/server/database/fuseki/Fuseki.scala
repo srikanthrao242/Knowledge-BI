@@ -5,12 +5,11 @@ package com.knowledge.server.database.fuseki
 
 import java.io.File
 
-import com.google.gson.Gson
 import com.knowledge.server.database.GraphServers
 import com.knowledge.ui.controllers.TableCreation
 import com.knowledge.ui.prefuse.GraphView
 import org.apache.http.impl.client.BasicResponseHandler
-import org.apache.http.{HttpHost, HttpRequest, HttpResponse}
+import org.apache.http.{HttpHost, HttpResponse}
 import org.apache.http.message.BasicHttpRequest
 import org.apache.jena.query.{DatasetAccessorFactory, QueryExecutionFactory, ResultSet}
 import org.apache.jena.rdf.model.{Model, ModelFactory}
@@ -18,9 +17,10 @@ import org.apache.jena.rdfconnection.{RDFConnection, RDFConnectionFactory}
 import org.apache.jena.riot.RDFLanguages
 import org.apache.jena.riot.web.HttpOp
 import org.apache.jena.tdb.TDBFactory
-
 import spray.json._
 import DefaultJsonProtocol._
+
+import scala.util.Try
 
 case class DsArray(`ds.name`: String, `ds.state`: Boolean)
 case class DS(datasets: List[DsArray])
@@ -50,19 +50,23 @@ class Fuseki extends GraphServers {
   private[fuseki] def getConnection: RDFConnection =
     RDFConnectionFactory.connect(serviceUri)
 
-  def getDs(): Unit = {
+  def getDs: Option[String] = {
     val client = HttpOp.getDefaultHttpClient
-    val requet = new BasicHttpRequest("GET", "/$/datasets")
-    val resp: HttpResponse =
-      client.execute(HttpHost.create(serviceUri), requet)
-    val hnd = new BasicResponseHandler().handleResponse(resp)
+    Try {
+      val requet = new BasicHttpRequest("GET", "/$/datasets")
+      val resp: HttpResponse =
+        client.execute(HttpHost.create(serviceUri), requet)
+      new BasicResponseHandler().handleResponse(resp)
+    }.toOption
   }
 
-  def putDs(dsName: String): Unit = {
+  def putDs(dsName: String): Option[HttpResponse] = {
     val client = HttpOp.getDefaultHttpClient
-    val requet =
-      new BasicHttpRequest("POST", "/$/datasets?dbType=tdb&dbName=" + dsName)
-    client.execute(HttpHost.create(serviceUri), requet)
+    Try {
+      val request =
+        new BasicHttpRequest("POST", "/$/datasets?dbType=tdb&dbName=" + dsName)
+      client.execute(HttpHost.create(serviceUri), request)
+    }.toOption
   }
 
   override def upload(graphName: String, path: String): Unit = {
@@ -81,10 +85,10 @@ class Fuseki extends GraphServers {
   }
 
   override def sparql(
-      query: String,
-      table: Boolean,
-      graph: Boolean
-    ): Option[ResultSet] =
+    query: String,
+    table: Boolean,
+    graph: Boolean
+  ): Option[ResultSet] =
     try {
       val qe =
         QueryExecutionFactory.sparqlService(serviceUri + s"/$dataset", query)

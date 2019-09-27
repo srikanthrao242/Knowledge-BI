@@ -68,16 +68,52 @@ class ReadFiles extends SparkCoreModule {
     schema.map(matchDataType).toMap
   }
 
-  def convertToOntology(csv: String, mappingFile: String): Unit = {
-    /*val df = SPARK.read
+  def readCSV(csv: String): Future[DataFrame] = async {
+    SPARK.read
       .format("csv")
       .option("sep", ",")
       .option("inferSchema", "true")
       .option("header", "true")
-      .load(csv)*/
+      .load(csv)
+  }
+
+  def getDfToMap(df: DataFrame): Map[String, String] = {
+    val col = df.columns
+    df.map { row =>
+      col.map { v =>
+        (v -> row.getAs[String](v))
+      }.toMap
+    }.collect().head
+  }
+
+  def getDfToMapArr(df: DataFrame): Map[String, Array[String]] = {
+    val col = df.columns
+    df.map { row =>
+      col.map { v =>
+        (v -> row.getAs[Array[String]](v))
+      }.toMap
+    }.collect().head
+  }
+
+  def convertToNQuads(csv: DataFrame,
+                      prefixes: Map[String, String],
+                      predicates: Map[String, String],
+                      relations: Map[String, Array[String]],
+                      graphName: String): Unit = async {
+    val dataTypes = getDataTypes(csv.schema)
+    val regex = "/(\\s)+/g".r
+    csv.rdd.map(row => {
+      val g_name = s"<$graphName>"
+
+    })
+
+  }
+
+  def convertToOntology(csv: String, mappingFile: String): Unit = async {
     val mappingDf = readJson(mappingFile)
-    mappingDf.createOrReplaceTempView("mappingFile")
-    mappingDf.printSchema()
-    mappingDf.select($"relations").columns.foreach(println)
+    val prefixes = getDfToMap(mappingDf.select("prefixes.*"))
+    val predicates = getDfToMap(mappingDf.select("predicates.*"))
+    val relations = getDfToMap(mappingDf.select("relations.*"))
+
   }
 }

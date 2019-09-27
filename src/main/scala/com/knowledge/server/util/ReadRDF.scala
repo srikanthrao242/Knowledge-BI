@@ -1,5 +1,5 @@
+/**/
 package com.knowledge.server.util
-
 
 import com.knowledge.server.sparkCore.SparkCoreModule
 import org.apache.jena.graph.Triple

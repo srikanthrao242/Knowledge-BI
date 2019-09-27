@@ -1,3 +1,4 @@
+/**/
 package com.knowledge.ui.menus
 
 import scalafx.scene.control.{Menu, MenuBar, MenuItem}

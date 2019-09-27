@@ -1,3 +1,4 @@
+/**/
 package com.knowledge.server.database
 
 import java.io.File
@@ -6,66 +7,75 @@ import java.nio.file.Files
 import com.knowledge.server.sparkCore.SparkCoreModule
 import org.apache.hadoop.fs.{FileSystem, Path}
 
-class CreateSchemas extends SparkCoreModule{
+class CreateSchemas extends SparkCoreModule {
 
   import CreateSchemas._
-  def createCatalog(name:String):Boolean ={
-    if(hdfsEnable){
+  def createCatalog(name: String): Boolean =
+    if (hdfsEnable) {
       val fs = FileSystem.get(SPARK_CONTEXT.hadoopConfiguration)
-      if(fs.exists(new Path(HDFS_PATH+name)))
+      if (fs.exists(new Path(HDFS_PATH + name))) {
         true
-      else
-        fs.mkdirs(new Path(HDFS_PATH+name))
-    }else{
-      if (Files.exists(java.nio.file.Paths.get(getWareHousePath+"/"+name)))
+      } else {
+        fs.mkdirs(new Path(HDFS_PATH + name))
+      }
+    } else {
+      if (Files.exists(java.nio.file.Paths.get(getWareHousePath + "/" + name))) {
         true
-      else{
-        val fs: File = new File(getWareHousePath+"/"+name)
+      } else {
+        val fs: File = new File(getWareHousePath + "/" + name)
         fs.exists()
       }
     }
-  }
 
-  def createRepository(catalog:String,name:String):Boolean ={
-    if(hdfsEnable){
+  def createRepository(catalog: String, name: String): Boolean =
+    if (hdfsEnable) {
       val fs = FileSystem.get(SPARK_CONTEXT.hadoopConfiguration)
-      if(fs.exists(new Path(HDFS_PATH+catalog+"/"+name)))
+      if (fs.exists(new Path(HDFS_PATH + catalog + "/" + name))) {
         true
-      else
-        fs.mkdirs(new Path(HDFS_PATH+catalog+"/"+name))
-    }else{
-      if (Files.exists(java.nio.file.Paths.get(getWareHousePath+"/"+catalog+"/"+name)))
+      } else {
+        fs.mkdirs(new Path(HDFS_PATH + catalog + "/" + name))
+      }
+    } else {
+      if (Files.exists(
+            java.nio.file.Paths
+              .get(getWareHousePath + "/" + catalog + "/" + name)
+          )) {
         true
-      else{
-        val fs: File = new File(getWareHousePath+"/"+catalog+"/"+name)
+      } else {
+        val fs: File = new File(getWareHousePath + "/" + catalog + "/" + name)
         fs.exists()
       }
     }
-  }
 
-  def listCatalogs : List[String] ={
+  def listCatalogs: List[String] = {
     val wh = new File(getWareHousePath)
-    if(wh.isDirectory)
+    if (wh.isDirectory) {
       wh.listFiles().map(_.getAbsolutePath).toList
-    else
+    } else {
       Nil
+    }
   }
 
-  def listRepositories(catalog:String) : List[String] ={
-    val cata = new File(getWareHousePath+"/"+catalog)
-    if(cata.isDirectory)
+  def listRepositories(catalog: String): List[String] = {
+    val cata = new File(getWareHousePath + "/" + catalog)
+    if (cata.isDirectory) {
       cata.listFiles().map(_.getAbsolutePath).toList
-    else
+    } else {
       Nil
+    }
   }
 
 }
 
-object CreateSchemas{
+object CreateSchemas {
 
   val hdfsEnable = false
   val HDFS_PATH = "hdfs://"
-  val getWareHousePath = new File(System.getProperty("user.dir")+"/spark-warehouse/").getAbsolutePath
-  val getDefaultCatalog = new File(System.getProperty("user.dir")+"/spark-warehouse/Default").getAbsolutePath
+  val getWareHousePath = new File(
+    System.getProperty("user.dir") + "/spark-warehouse/"
+  ).getAbsolutePath
+  val getDefaultCatalog = new File(
+    System.getProperty("user.dir") + "/spark-warehouse/Default"
+  ).getAbsolutePath
 
 }

@@ -1,3 +1,4 @@
+/**/
 package com.knowledge.ui.controllers
 
 import java.net.URL
@@ -20,8 +21,7 @@ class ScreensController {
     if (screen.contains(name)) {
       screen -= name
       true
-    }
-    else {
+    } else {
       false
     }
 

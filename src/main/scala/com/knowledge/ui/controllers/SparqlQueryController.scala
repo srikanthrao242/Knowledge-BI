@@ -12,10 +12,9 @@ import scalafxml.core.macros.sfxml
 import com.knowledge.ui._
 
 @sfxml
-class SparqlQueryController(
-    private var vbox: VBox,
-    private var queryArea: TextArea,
-    private var hbox: HBox) {
+class SparqlQueryController(private var vbox: VBox,
+                            private var queryArea: TextArea,
+                            private var hbox: HBox) {
 
   def gerServerObject(): GraphServers =
     if (server == "AG") {
@@ -36,9 +35,7 @@ class SparqlQueryController(
     ag.sparql(queryString, false, true)
   }
 
-  def cancelExecution(): Unit = {
-    println("cancel query")
+  def cancelExecution(): Unit =
     this.hbox.getScene
-  }
 
 }
