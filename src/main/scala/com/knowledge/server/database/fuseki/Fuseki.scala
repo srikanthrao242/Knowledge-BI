@@ -26,8 +26,8 @@ case class DsArray(`ds.name`: String, `ds.state`: Boolean)
 case class DS(datasets: List[DsArray])
 
 object DsImplicits {
-  implicit val dsArrjson = jsonFormat2(DsArray)
-  implicit val dsjson = jsonFormat1(DS)
+  implicit val dsArrjson: RootJsonFormat[DsArray] = jsonFormat2(DsArray)
+  implicit val dsjson: RootJsonFormat[DS] = jsonFormat1(DS)
 }
 
 class Fuseki extends GraphServers {
@@ -74,7 +74,7 @@ class Fuseki extends GraphServers {
     val model = ModelFactory.createDefaultModel()
     val lang = RDFLanguages.filenameToLang(path)
     import java.io.FileInputStream
-    try {
+    Try {
       val in = new FileInputStream(file)
       try model.read(in, "", lang.getName)
       finally if (in != null) in.close()

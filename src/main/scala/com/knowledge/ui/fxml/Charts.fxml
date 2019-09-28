@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -14,8 +12,10 @@
           <children>
             <VBox prefHeight="372.0" prefWidth="133.0">
               <children>
-                <ComboBox fx:id="predicate_chart" prefWidth="150.0" promptText="predicate" />
-                <ComboBox fx:id="measure_chart" prefWidth="150.0" promptText="Measure" />
+                <Label prefWidth="132.0" text="Predicate" />
+                <ListView fx:id="predicate_chart" prefHeight="85.0" prefWidth="133.0" />
+                <Label prefWidth="132.0" text="Measure" />
+                <ListView id="predicate_chart" fx:id="measure_chart" prefHeight="85.0" prefWidth="133.0" />
                 <ComboBox fx:id="chart_chart" prefWidth="150.0" promptText="Charts" />
                 <ComboBox fx:id="chart_graph" prefWidth="150.0" promptText="Graphs" />
                 <Button fx:id="createChart" mnemonicParsing="false" onAction="#createCharts" prefHeight="25.0" prefWidth="132.0" text="create" />
