@@ -1,35 +1,34 @@
-/*
- */
+/**/
 package com.knowledge.ui.charts
-
 import com.knowledge.server.util.IteratorResultSetQuerySolution
 import org.apache.jena.query.{QuerySolution, ResultSet}
 import scalafx.application.Platform
 import scalafx.collections.ObservableBuffer
-import scalafx.geometry.Side
-import scalafx.scene.chart.PieChart
+import scalafx.scene.chart.{LineChart, NumberAxis, XYChart}
 import scalafx.scene.layout.StackPane
 
-trait KPie extends Charts {
+trait KLine extends Charts {
+
   override def createUI(result: ResultSet): Unit = {
+    val xAxis = new NumberAxis()
+    xAxis.label = predicate
+    val yAxis = new NumberAxis()
+    val lineChart = LineChart(xAxis, yAxis)
+    lineChart.title = "Knowledge-BI"
     val qs = new IteratorResultSetQuerySolution(result).toList
-    val pieChartData = ObservableBuffer(qs.map { v: QuerySolution =>
-      val (mes, pre) = ChartsUtil.getMesNPre(v, measure.head, predicate)
-      PieChart.Data(pre, mes)
+    val data = ObservableBuffer(qs.map { v: QuerySolution =>
+      val (measure1, measure2) =
+        ChartsUtil.getMesNMes(v, measure.head, predicate)
+      XYChart.Data(measure1.asInstanceOf[Number], measure2.asInstanceOf[Number])
     })
+    val series = XYChart.Series[Number, Number]("Knowledge-BI", data)
+    lineChart.getData.add(series)
     Platform.runLater {
-      val chart = new PieChart(pieChartData)
-      chart.setLabelLineLength(10)
-      chart.setLegendSide(Side.Left)
-      chart.setPrefHeight(1000)
-      chart.setPrefWidth(1000)
-      chart.autosize()
-      pane.getChildren.addAll(chart)
+      pane.getChildren.addAll(lineChart)
     }
   }
 }
-
-object KPie {
+object KLine {
   def apply(_measure: List[String],
             _pane: StackPane,
             _query: String,

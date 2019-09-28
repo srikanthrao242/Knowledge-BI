@@ -35,7 +35,7 @@ class ScreensController {
       addScreen(name, root)
       Some(dialogStage)
     } catch {
-      case _ => None
+      case _: Exception => None
     }
 
 }

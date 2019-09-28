@@ -12,7 +12,6 @@ class FusekiSpec extends FlatSpec {
     Fuseki.serviceUri = "http://localhost:3030/sample"
     Fuseki.path = "/sample"
     val f = new Fuseki
-    f.getDs()
     // f.upload("http://www.knowldegeBi.com/example", "F:\\IdeaProjects\\Knowledge-BI\\dataset\\rdf.nt")
   }
 
