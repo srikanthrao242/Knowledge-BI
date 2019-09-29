@@ -5,6 +5,8 @@ import org.apache.jena.query.{QuerySolution, ResultSet}
 import scalafx.application.Platform
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.chart._
+import scalafx.scene.control.Alert
+import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.layout.StackPane
 
 trait KArea extends Charts {
@@ -14,28 +16,31 @@ trait KArea extends Charts {
     val yAxis = new NumberAxis()
     val areaChart = AreaChart(xAxis, yAxis)
     val qs = new IteratorResultSetQuerySolution(result).toList
-    val series = ObservableBuffer(measure.map(mes => {
-      val data = ObservableBuffer(qs.map { v: QuerySolution =>
-        val (measure1, measure2) = ChartsUtil.getMesNMes(v, mes, predicate)
-        XYChart.Data(measure1.asInstanceOf[Number],
-                     measure2.asInstanceOf[Number])
-      })
-      XYChart.Series[Number, Number](mes, data)
-    }))
-    areaChart.getData.addAll(series)
-    Platform.runLater {
-      pane.getChildren.addAll(areaChart)
+    if (qs.nonEmpty) {
+      val series = ObservableBuffer(measure.map(mes => {
+        val data = ObservableBuffer(qs.map { v: QuerySolution =>
+          val (measure1, measure2) = ChartsUtil.getMesNMes(v, mes, predicate)
+          XYChart.Data(measure1.asInstanceOf[Number],
+                       measure2.asInstanceOf[Number])
+        })
+        XYChart.Series[Number, Number](mes, data)
+      }))
+      areaChart.getData.addAll(series)
+      Platform.runLater {
+        pane.getChildren.addAll(areaChart)
+      }
+    } else {
+      new Alert(AlertType.Information, "No Data found").showAndWait()
     }
   }
-
 }
 
 object KArea {
   def apply(_measure: List[String],
             _pane: StackPane,
             _query: String,
-            _predicate: String): KPie =
-    new KPie {
+            _predicate: String): KArea =
+    new KArea {
       override val measure: List[String] = _measure
       override val pane: StackPane = _pane
       override val query: String = _query
