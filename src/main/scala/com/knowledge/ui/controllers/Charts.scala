@@ -9,16 +9,17 @@ import com.knowledge.server.database.AllegroGraph.AG
 import com.knowledge.server.database.fuseki.Fuseki.{dataset, serviceUri}
 import com.knowledge.server.util.IteratorResultSetString
 import com.knowledge.ui
-import com.knowledge.ui.charts.{ChartsUtil, HorizontalBar, KArea, KLine, KPie}
+import com.knowledge.ui.charts.{ChartsUtil, HorizontalBar, KArea, KBar, KBubble, KLine, KPie, KScatter}
 import com.knowledge.ui.menus.NamedGraphs
 import org.apache.jena.query.{QueryExecutionFactory, ResultSet}
-import scalafx.scene.control.{ComboBox, ListView, SelectionMode}
+import scalafx.scene.control.{Alert, ComboBox, ListView, SelectionMode}
 import scalafx.scene.layout.{Pane, StackPane}
 import scalafxml.core.macros.sfxml
 
 import scala.collection.JavaConverters._
 import scalafx.Includes._
 import scalafx.application.Platform
+import scalafx.scene.control.Alert.AlertType
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.async.Async.async
@@ -158,6 +159,18 @@ class Charts(private val predicate_chart: ListView[String],
         val q: String =
           ChartsUtil.createMultiMeasQuery(graph, pre.head, measure)
         KArea(measure, stackPane, q, preName) createIn ()
+      case "Bubble" =>
+        val q: String =
+          ChartsUtil.createMultiMeasQuery(graph, pre.head, measure)
+        KBubble(measure, stackPane, q, preName) createIn ()
+      case "Scatter" =>
+        val q: String =
+          ChartsUtil.createMultiMeasQuery(graph, pre.head, measure)
+        KScatter(measure, stackPane, q, preName) createIn ()
+      case "Bar" =>
+        KBar(measure, stackPane, query, preName).createIn()
+      case _ =>
+        new Alert(AlertType.Error, "No chart selected").showAndWait()
     }
   }
 
